@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="description" content="">
+	<meta name="author" content="">
+	<title>N & LW Lawn Care - Landscaping Bootstrap4 HTML5 Responsive Template </title>
+	<!-- Bootstrap core CSS -->
+	<link href="/static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+	<!-- Fontawesome CSS -->
+	<link href="/static/css/all.css" rel="stylesheet">
+	<!-- Custom styles for this template -->
+	<link href="/static/css/style.css" rel="stylesheet">
+	<!-- Custom styles for SoccerWorld -->
+	<link href="/static/css/card.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+	<div th:replace="~{/board/fragments :: category}"></div>
+	
+	<!-- full Title -->
+	<div class="full-title">
+		<div class="container">
+			<!-- Page Heading/Breadcrumbs -->
+			<h1 class="mt-4 mb-3">축구 토론
+				<small>게시판</small>
+			</h1>
+		</div>
+	</div>
+
+    <!-- Page Content -->
+	<div class="container">
+		<div class="breadcrumb-main">
+			<ol class="breadcrumb">
+				<li class="breadcrumb-item">
+					Categories
+				</li>
+				<li class="breadcrumb-item ">
+					<a href="/board/meme_list">밈 게시판</a>
+				</li>
+				<li class="breadcrumb-item active">
+					<a href="/board/free_list">자유 게시판</a>
+				</li>
+				<li class="breadcrumb-item ">
+					<a href="/board/debate_list">축구 토론</a>
+				</li>
+				<li class="breadcrumb-item ">
+					<a href="/board/history_list">축구 역사</a>
+				</li>
+				<li class="breadcrumb-item ">
+					<a href="/board/prospect_list">유망주</a>
+				</li>
+			</ol>
+		</div>
+
+		<div class="blog-entries">
+
+			<!-- Blog Post -->
+			<div class="container">
+				<div class="card mb-sm-2">
+					<div class="input-group">
+						<input type="text" class="form-control" placeholder="Search for...">
+						<span class="input-group-btn">
+					  <button class="btn btn-secondary" type="button">Go!</button>
+					  <a href="#" class="btn btn-secondary" role="button">글쓰기</a>
+					</span>
+					</div>
+				</div>
+				<div class="d-flex justify-content-end mb-3">
+					<button id="sort-recommend" class="btn btn-secondary me-2">추천순</button>&nbsp;
+					<button id="sort-views" class="btn btn-secondary me-2">조회순</button>&nbsp;
+					<button id="sort-latest" class="btn btn-secondary">최신순</button>
+				</div>
+
+				<div class="card mb-1">
+					<div class="card-body">
+						<div class="d-flex align-items-center">
+							<div class="me-4" style="margin-right: 50px;">
+								<img class="img-fluid rounded" src="/static/images/blog-img-01.jpg" alt="" style="width: 100%; max-width: 50px;" />
+							</div>
+							<h3 class="card-title" style="font-size: 1rem; margin: 0; flex-grow: 1;">
+								<a href="/board/meme_detail" style="text-decoration: none; ">이번 시즌 EPL 누가 우승할까</a>
+							</h3>
+							<div class="d-flex ms-auto">
+								<span class="me-3">추천수: <strong>10</strong></span>&nbsp;&nbsp;&nbsp;
+								<span class="me-3">조회수: <strong>200</strong></span>&nbsp;&nbsp;&nbsp;
+								<span>날짜: <strong>2023-09-09</strong></span>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="card mb-1">
+					<div class="card-body">
+						<div class="d-flex align-items-center">
+							<div class="me-4" style="margin-right: 50px;">
+								<a href="#">
+									<img class="img-fluid rounded" src="" alt="" style="width: 100%; max-width: 50px;" />
+								</a>
+							</div>
+							<h3 class="card-title" style="font-size: 1rem; margin: 0; flex-grow: 1;">
+								<a href="#" style="text-decoration: none; ">SNL 뮐친놈 ㅋㅋ</a>
+							</h3>
+							<div class="d-flex ms-auto">
+								<span class="me-3">추천수: <strong>99</strong></span>&nbsp;&nbsp;&nbsp;
+								<span class="me-3">조회수: <strong>9999</strong></span>&nbsp;&nbsp;&nbsp;
+								<span>날짜: <strong>2023-09-09</strong></span>
+							</div>
+						</div>
+					</div>
+				</div>
+
+			</div>
+
+			<div class="pagination_bar_arrow">
+				<!-- Pagination -->
+				<ul class="pagination justify-content-center mb-4">
+					<li class="page-item">
+						<a class="page-link" href="#">&larr; Older</a>
+					</li>
+					<li class="page-item disabled">
+						<a class="page-link" href="#">Newer &rarr;</a>
+					</li>
+				</ul>
+			</div>
+
+		</div>
+
+	</div>
+  <!-- /.container -->
+
+	<!--footer starts from here-->
+    <footer class="footer">
+        <div class="container bottom_border">
+            <div class="row">
+               <div class="col-lg-3 col-md-6 col-sm-6 col">
+					<h5 class="headin5_amrc col_white_amrc pt2">Find us</h5>
+					<!--headin5_amrc-->
+					<p class="mb10">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s</p>
+					<p><i class="fa fa-location-arrow"></i> 9878/25 sec 9 rohini 35 </p>
+					<p><i class="fa fa-phone"></i> +91-9999878398 </p>
+					<p><i class="fa fa fa-envelope"></i> info@example.com </p>
+               </div>
+               <div class="col-lg-3 col-md-6 col-sm-6 col">
+					<h5 class="headin5_amrc col_white_amrc pt2">Follow us</h5>
+					<!--headin5_amrc ends here-->
+					<ul class="footer_ul2_amrc">
+						<li>
+							<a href="#"><i class="fab fa-twitter fleft padding-right"></i> </a>
+							<p>Lorem Ipsum is simply dummy printing...<a href="#">https://www.lipsum.com/</a></p>
+						</li>
+						<li>
+							<a href="#"><i class="fab fa-twitter fleft padding-right"></i> </a>
+							<p>Lorem Ipsum is simply dummy printing...<a href="#">https://www.lipsum.com/</a></p>
+						</li>
+						<li>
+							<a href="#"><i class="fab fa-twitter fleft padding-right"></i> </a>
+							<p>Lorem Ipsum is simply dummy printing...<a href="#">https://www.lipsum.com/</a></p>
+						</li>
+					</ul>
+					<!--footer_ul2_amrc ends here-->
+				</div>
+				<div class="col-lg-3 col-md-6 col-sm-6">
+					<h5 class="headin5_amrc col_white_amrc pt2">Quick links</h5>
+					<!--headin5_amrc-->
+					<ul class="footer_ul_amrc">
+						<li><a href="#">Default Version</a></li>
+						<li><a href="#">Boxed Version</a></li>
+						<li><a href="#">Our Team </a></li>
+						<li><a href="#">About Us</a></li>
+						<li><a href="#">Our Services</a></li>
+						<li><a href="#">Get In Touch</a></li>
+					</ul>
+					<!--footer_ul_amrc ends here-->
+				</div>
+				<div class="col-lg-3 col-md-6 col-sm-6 ">
+					<h5 class="headin5_amrc col_white_amrc pt2">Recent posts</h5>
+					<!--headin5_amrc-->
+					<ul class="footer_ul_amrc">
+						<li class="media">
+							<div class="media-left">
+								<img class="img-fluid" src="/static/images/post-img-01.jpg" alt="" />
+							</div>
+							<div class="media-body">
+								<p>How to find best dog food?</p>
+								<span>22 Sep 2018</span>
+							</div>
+						</li>
+						<li class="media">
+							<div class="media-left">
+								<img class="img-fluid" src="/static/images/post-img-02.jpg" alt="" />
+							</div>
+							<div class="media-body">
+								<p>How to find best dog food?</p>
+								<span>34 Sep 2018</span>
+							</div>
+						</li>
+						<li class="media">
+							<div class="media-left">
+								<img class="img-fluid" src="/static/images/post-img-03.jpg" alt="" />
+							</div>
+							<div class="media-body">
+								<p>How to find best dog food?</p>
+								<span>30 Sep 2018</span>
+							</div>
+						</li>
+					</ul>
+					<!--footer_ul_amrc ends here-->
+				</div>
+			</div>
+		</div>
+        <div class="container">
+            <div class="footer-logo">
+				<a href="#"><img src="/static/images/1111111111.PNG" alt="" /></a>
+			</div>
+            <!--foote_bottom_ul_amrc ends here-->
+            <p class="copyright text-center">All Rights Reserved. &copy; 2018 <a href="#">N & LW Lawn Care</a> Design By : 
+				<a href="https://html.design/">html design</a>
+            </p>
+            <ul class="social_footer_ul">
+				<li><a href="#"><i class="fab fa-facebook-f"></i></a></li>
+				<li><a href="#"><i class="fab fa-twitter"></i></a></li>
+				<li><a href="#"><i class="fab fa-linkedin"></i></a></li>
+				<li><a href="#"><i class="fab fa-instagram"></i></a></li>
+            </ul>
+            <!--social_footer_ul ends here-->
+        </div>
+    </footer>
+
+<!-- Bootstrap core JavaScript -->
+<script src="/static/vendor/jquery/jquery.min.js"></script>
+<script src="/static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
