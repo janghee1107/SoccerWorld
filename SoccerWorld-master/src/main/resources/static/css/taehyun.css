@@ -1,0 +1,77 @@
+.player-info-card {
+    background-color: #f8f9fa;
+    color: #333;
+    padding: 20px;
+
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.player-info-card h5 {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+}
+
+.info-label {
+    font-weight: bold;
+}
+
+.info-value {
+    color: #555;
+}
+
+.player-img {
+    max-width: 100%;
+
+    margin-bottom: 15px;
+}
+
+.team-logo {
+    text-align: center;
+}
+
+/* 추가된 기존 CSS */
+.my-5 {
+    color: #7fb6ff;
+}
+
+.title-box {
+    color: white;
+    background-color: #7fb6ff;
+    padding: 20px;
+    text-align: center;
+
+    margin: 50px 20px;
+}
+
+.info-box {
+    background-color: #7fb6ff;
+    color: black;
+    padding: 20px;
+
+    text-align: left;
+    margin: 20px 0;
+}
+
+.container-5 {
+    background-color: #1e1c54;
+    padding: 20px;
+}
+
+
+.blue-background {
+    background-color: #7fb6ff; /* 파란색 배경 */
+    color: white; /* 텍스트 색상을 흰색으로 설정 */
+}
+
+.white-background {
+    background-color: white; /* 흰색 배경 */
+    color: black; /* 텍스트 색상을 검정색으로 설정 */
+}
+
+.border-right {
+    border-right: 2px solid #000; /* 세로 구분선 */
+}
+.table-bordered td {
+    border: 2px solid #7fb6ff; /* 테두리를 검정색으로 설정 */
+}

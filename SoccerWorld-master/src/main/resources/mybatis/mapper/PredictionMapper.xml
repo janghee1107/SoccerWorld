@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="PredictionName">
+    <!--    <sql id = 'sql_selectAll' >-->
+    <!--        select * from MemberDto-->
+    <!--    </sql>-->
+    <select id="checkPrediction" parameterType="idusw.soccerworld.domain.dto.PredictionDto" resultMap="PredictionWithAll">
+        select * from prediction where member_id =#{memberDto.memberId} and game_id =#{gameDto.gameId};
+    </select>
+
+    <select id ="selectPredictionsByGameId" parameterType="java.util.List" resultMap="PredictionWithAll">
+        select prediction_id, game_id, member_id , result from prediction where game_id IN
+        <foreach item = "gameDto" collection="list" open="(" separator="," close=")">
+            #{gameDto.gameId}
+        </foreach>
+    </select>
+
+    <insert id="insertPrediction" parameterType="idusw.soccerworld.domain.dto.PredictionDto">
+        insert into prediction(member_id,game_id,result) values (#{memberDto.memberId}, #{gameDto.gameId}, #{result});
+        <selectKey order="AFTER" resultType="int" keyProperty="predictionId">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+    <resultMap id="PredictionWithAll" type="idusw.soccerworld.domain.dto.PredictionDto">
+        <id property="predictionId" column="prediction_id" />
+        <result property="result" column="result"/>
+        <association property="memberDto" javaType="idusw.soccerworld.domain.dto.MemberDto">
+            <id property="memberId" column="member_id"/>
+            <result property="memberId" column="member_id"/>
+        </association>
+        <association property="gameDto" javaType="idusw.soccerworld.domain.dto.GameDto">
+            <id property="gameId" column="game_id"/>
+            <result property="gameId" column="game_id"/>
+        </association>
+    </resultMap>
+</mapper>

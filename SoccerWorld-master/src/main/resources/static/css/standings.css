@@ -1,0 +1,38 @@
+
+
+.standings-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.standings-table thead tr {
+    background-color: #333333;
+    color: #ffffff;
+}
+
+.standings-table th,
+.standings-table td {
+    padding: 10px;
+    text-align: center;
+    border: 1px solid #dddddd;
+}
+
+.standings-table tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.standings-table img {
+    height: 24px;
+    margin-right: 8px;
+    vertical-align: middle;
+}
+
+.standings-table td img {
+    display: inline-block;
+}
+
+.standings-table tbody tr:hover {
+    background-color: #eaeaea;
+    cursor: pointer;
+}

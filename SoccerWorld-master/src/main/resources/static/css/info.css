@@ -1,0 +1,90 @@
+body {
+    background-color: #f4f4f4;
+}
+
+/* 헤더 영역 */
+.header {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background-color: #fff;
+    border-bottom: 2px solid #ddd;
+}
+
+.header img {
+    width: 50px;
+    margin-right: 10px;
+}
+
+.header h1 {
+    font-size: 28px;
+    margin: 0;
+}
+
+.header .search-bar {
+    margin-left: auto;
+    margin-right: 20px;
+}
+
+.header .auth-buttons button {
+    margin-left: 5px;
+}
+
+/* 메뉴 영역 */
+.nav-bar {
+    background-color: #6cc3ef;
+    padding: 10px 0;
+    text-align: center;
+}
+
+.nav-bar a {
+    margin: 0 10px;
+    color: white;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+/* 리그 로고 섹션 */
+.league-section {
+    display: flex;
+    justify-content: center;
+    padding: 10px 0;
+    background-color: #fff;
+    border-bottom: 2px solid #ddd;
+}
+
+.league-section img {
+    width: 50px;
+    margin: 0 5px;
+}
+
+/* 팀 로고 섹션 */
+.teams-section {
+    display: flex;
+    justify-content: center;
+    padding: 20px 0;
+}
+
+.team-card {
+    width: 150px;
+    margin: 10px;
+    text-align: center;
+    background-color: #fff;
+    padding: 15px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+}
+
+.team-card img {
+    width: 100px;
+    margin-bottom: 10px;
+}
+
+.team-card button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}

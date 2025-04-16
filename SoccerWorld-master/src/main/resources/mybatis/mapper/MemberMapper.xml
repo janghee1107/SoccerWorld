@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="MemberMapper">
+    <select id="loginCheck" parameterType="String" resultType="memberDto">
+        SELECT member_id AS memberId, password, name, gender, birthday, nickname, team_id, role FROM member WHERE id = #{id}
+    </select>
+    <insert id="insertOne" parameterType="memberDto">
+        INSERT INTO member(id, password, name, gender, birthday, nickname, team_id)
+        VALUES(#{id}, #{password}, #{name}, #{gender}, #{birthday}, #{nickname}, #{teamId})
+    </insert>
+    <select id="selectById" parameterType="String" resultType="String">
+        SELECT id FROM member WHERE id = #{nickname}
+    </select>
+    <select id="selectByNickname" parameterType="String" resultType="String">
+        SELECT nickname FROM member WHERE nickname = #{nickname}
+    </select>
+    <select id="selectByMemberId" parameterType="long" resultMap="memberResultMap">
+        select member_id, id, password, name, nickname, gender, birthday, point from member where member_id =#{memberId}
+    </select>
+
+    <resultMap id="memberResultMap" type="idusw.soccerworld.domain.dto.MemberDto">
+        <result property="memberId" column="member_id"/>
+        <result property="id" column="id"/>
+        <result property="password" column="password"/>
+        <result property="name" column="name"/>
+        <result property="nickname" column="nickname"/>
+        <result property="gender" column="gender"/>
+        <result property="birthday" column="birthday"/>
+        <result property="point" column="point"/>
+    </resultMap>
+</mapper>

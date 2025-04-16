@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<!--Navigation-->
+<nav th:fragment="nav">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3">
+                <img src="/static/images/1111111111.PNG" onclick="location.href='/main/index'">
+            </div>
+            <div class="col-lg-6"></div>
+            <div class="col-lg-3">
+                <div class="search-container">
+                    &nbsp;<i class="fa fa-search"></i>
+                    <input type="text" class="search-bar">
+                </div>
+                <br>
+                <th:block sec:authorize="isAnonymous()">
+                    <button class="menu-button" style="cursor: pointer;"
+                            onclick="location.href='/member/login?page-type=login'">로그인
+                    </button>
+                    <button class="menu-button" style="cursor: pointer;"
+                            onclick="location.href='/member/login?page-type=register'">회원가입
+                    </button>
+                </th:block>
+                <th:block sec:authorize="isAuthenticated()">
+                    <form action="/member/logout" method="post">
+                        <input hidden th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                        <button type="submit" class="menu-button" style="cursor: pointer;" >로그아웃
+                        </button>
+                    </form>
+                </th:block>
+                <button class="menu-button" style="cursor: pointer;" onclick="location.href='/member/mypage'">내정보
+                </button>
+            </div>
+        </div>
+        <br>
+        <table class="top-bar">
+            <tr style="cursor: pointer;">
+                <td style="color: white;" onclick="location.href='/main/index';">메인</td>
+                <td onclick="">리그순위</td>
+                <td onclick="showLeagues();">팀정보</td>
+                <td onclick="showLeagueSchedules();">축구일정</td>
+                <td style="color: white;" onclick="location.href='/category/list';">게시판</td>
+            </tr>
+        </table>
+        <table class="ranking" id="leagueList">
+            <tr style="cursor: pointer;">
+                <td onclick="showTeams('EPL')">
+                    EPL
+                    <br>
+                    <img onclick="showTeams('EPL')" src="/static/images/pl-logo.png">
+                </td>
+                <td onclick="showTeams('LALIGA')">
+                    LA LIGA
+                    <br>
+                    <img src="/static/images/ll-logo.png">
+                </td>
+                <td onclick="showTeams('SERIEA')">
+                    SERIE A
+                    <br>
+                    <img src="/static/images/sa-logo.png">
+                </td>
+                <td onclick="showTeams('BUNDESLIGA')">
+                    BUNDESLIGA
+                    <br>
+                    <img src="/static/images/bl-logo.png">
+                </td>
+            </tr>
+        </table>
+        <table class="ranking" id="leagueScheduleList">
+            <tr style="cursor: pointer;">
+                <td onclick="location.href='/fixture/schedule?league=PL';">
+                    EPL
+                    <br>
+                    <img src="/static/images/pl-logo.png">
+                </td>
+                <td onclick="location.href='/fixture/schedule?league=PD';">
+                    LA LIGA
+                    <br>
+                    <img src="/static/images/ll-logo.png">
+                </td>
+                <td onclick="location.href='/fixture/schedule?league=SA';">
+                    SERIE A
+                    <br>
+                    <img src="/static/images/sa-logo.png">
+                </td>
+                <td onclick="location.href='/fixture/schedule?league=BL1';">
+                    BUNDESLIGA
+                    <br>
+                    <img src="/static/images/bl-logo.png">
+                </td>
+            </tr>
+        </table>
+        <br>
+        <div class="ranking">
+            <div id="eplList" class="teamList">
+                <div class="inner-bar" th:each="teamDto : ${teamList}" th:if="${teamDto.league == 'Premier League'}"
+                    th:onclick="|location.href='/team/info?team-id='+${teamDto.teamId};|">
+                    <img th:src="${teamDto.logo}" width="64px" />
+                    <br>
+                    <label th:text="${teamDto.name}"></label>
+                </div>
+            </div>
+            <div id="laLigaList" class="teamList">
+                <div class="inner-bar" th:each="teamDto : ${teamList}" th:if="${teamDto.league == 'Primera Division'}"
+                     th:onclick="|location.href='/team/info?team-id='+${teamDto.teamId};|">
+                    <img th:src="${teamDto.logo}" width="64px" />
+                    <br>
+                    <label th:text="${teamDto.name}"></label>
+                </div>
+            </div>
+            <div id="serieAList" class="teamList">
+                <div class="inner-bar" th:each="teamDto : ${teamList}" th:if="${teamDto.league == 'Serie A'}"
+                     th:onclick="|location.href='/team/info?team-id='+${teamDto.teamId};|">
+                    <img th:src="${teamDto.logo}" width="64px" />
+                    <br>
+                    <label th:text="${teamDto.name}"></label>
+                </div>
+            </div>
+            <div id="bundesligaList" class="teamList">
+                <div class="inner-bar" th:each="teamDto : ${teamList}" th:if="${teamDto.league == 'Bundesliga'}"
+                     th:onclick="|location.href='/team/info?team-id='+${teamDto.teamId};|">
+                    <img th:src="${teamDto.logo}" width="64px" />
+                    <br>
+                    <label th:text="${teamDto.name}"></label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/static/js/fragments.js"></script>
+</nav>
+</body>
+</html>

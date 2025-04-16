@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Football Fixtures</title>
+  <link rel="stylesheet" href="/static/css/fixture.css">
+  <link rel="stylesheet" href="/static/css/calender.css">
+  <link href="/static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/static/css/main-style.css" rel="stylesheet">
+  <link href="/static/css/style.css" rel="stylesheet">
+  <link href="/static/css/all.css" rel="stylesheet">
+  <script src="https://kit.fontawesome.com/c0890a4f25.js" crossorigin="anonymous"></script>
+</head>
+<body>
+  <nav th:insert="~{/fragments/fragments :: nav}"></nav>
+  <br>
+  <div class="container">
+    <div class="schedule-container">
+      <h2>프리미어 리그일정</h2>
+      <div class="calender">
+      <input type="date" class="date-input hidden" id="dateInput" />
+      </div>
+
+      <div class="date-selector" id="dateSelector">
+        <button class="arrow-btn" id="prevDay"><i class="fa-solid fa-angle-left"></i></button>
+        <div class="dateButtons" id="dateButtons"></div>
+        <button class="arrow-btn" id="nextDay"><i class="fa-solid fa-angle-right"></i></button>
+      </div>
+
+      <!-- Match Schedule will appear here -->
+      <div class="match-schedule" id="matchSchedule">
+        <h3>경기를 일정을 선택하세요</h3>
+      </div>
+    </div>
+  </div>
+
+<script>
+  let currentDate = new Date(); // 현재 날짜 저장
+  const daysToShow = 7; // 표시할 날짜 수
+  // 날짜 버튼을 생성하는 함수
+  document.addEventListener('DOMContentLoaded', function() {
+    createDateButtons(currentDate); // 달력에서 날짜를 지정하지않으면 오늘 날짜 기준으로 버튼생성
+  });
+  function createDateButtons(startDate) {
+    const dateButtons = document.getElementById('dateButtons');
+    dateButtons.innerHTML = ''; // 기존 버튼 제거
+
+    for (let i = 0; i < daysToShow; i++) {
+      const date = new Date(startDate);
+      date.setDate(date.getDate() + i); // 현재상태 날짜 기준으로 7개 일정버튼 생성
+
+      const formattedDate = date.toISOString().split('T')[0]; // YYYY-MM-DD 형식으로 바꿈
+      const buttonText = `${date.getMonth() + 1}.${date.getDate()}.${date.toLocaleDateString('ko-KR', { weekday: 'short' })}`; // "MM.DD.요일" 형식 표시
+
+      const button = document.createElement('button');
+      button.className = 'date-btn';
+      button.setAttribute('data-date', formattedDate);
+      button.innerText = buttonText;
+
+      // 버튼 클릭 이벤트 추가
+      button.addEventListener('click', function() {
+        fetchMatches(formattedDate); // 해당 날짜의 경기 일정 불러오기
+      });
+
+      dateButtons.appendChild(button); // 버튼을 dateButtons에 추가
+    }
+    // 기본값으로 오늘 날짜의 버튼 클릭
+
+  }
+
+  // 선택한 날짜의 경기 일정 불러오기
+  function fetchMatches(selectedDate) {
+    fetch(`/schedule?selectedDate=${selectedDate}&leagueNum=39`)
+            .then(response => {
+              if (!response.ok) {
+                throw new Error('Network response was not ok: ' + response.statusText);
+              }
+              return response.json();
+            })
+            .then(data => {
+              const matchScheduleDiv = document.getElementById('matchSchedule');
+              matchScheduleDiv.innerHTML = ''; // Clear existing content
+
+              if (data && data.length > 0) {
+                matchScheduleDiv.innerHTML = `<h3>${selectedDate} 경기일자</h3>`;
+                data.forEach(match => {
+                  const matchCard = `
+<div class="match-list">
+    <div class="match">
+            <div class="match-header">
+                <span class="match-header-text">${match.date}</span>
+                <span class="match-header-text">${match.round}</span>
+                ${match.status === 'Not Started' ? `<span class="prediction-success">경기 전</span>` : ''}
+                ${match.status === 'Match Finished' ? `<span class="prediction-finished">경기 종료</span>` : ''}
+                ${match.status === 'First Half' ? `<span class="prediction-playing">경기 전반</span>` : ''}
+                ${match.status === 'Second Half' ? `<span class="prediction-playing">경기 후반</span>` : ''}
+                ${match.status === 'Halftime' ? `<span class="prediction-halftime">하프 타임</span>` : ''}
+            </div>
+            <div class="match-body">
+                <div class="team">
+                    <div class="team-info">
+                        <div class="team-logo">
+                            <img src="${match.home.logo}" alt="Team Logo">
+                        </div>
+                        <div class="team-percentage"><span>${match.home.name}</span></div>
+                    </div>
+                    <div class="score"><span>${match.home.goals !== null ? match.home.goals : 0}</span></div>
+                </div>
+
+                <div class="vs-section">
+                    <div class="team-vs">
+                        <div class="vs-logo">
+                            <img src="${match.leagueLogo}" alt="VS Logo">
+                        </div>
+                        <div class="vs-text">vs</div>
+                    </div>
+                </div>
+
+                <div class="team">
+                    <div class="team-info">
+                        <div class="team-logo">
+                            <img src="${match.away.logo}" alt="Team Logo">
+                        </div>
+                        <div class="team-percentage"><span>${match.away.name}</span></div>
+                    </div>
+                    <div class="score"><span>${match.away.goals !== null ? match.away.goals : 0}</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+`;
+                  matchScheduleDiv.insertAdjacentHTML('beforeend', matchCard);
+                });
+              } else {
+                matchScheduleDiv.innerHTML = `<h3>${selectedDate} 경기는 없습니다.</h3>`;
+              }
+            })
+            .catch(err => {
+              console.error('Error fetching matches:', err);
+              document.getElementById('matchSchedule').innerHTML = '<p>Error loading matches. Please try again later.</p>';
+            });
+  }
+  document.getElementById('dateInput').addEventListener('change', function() {
+    currentDate = this.value; // 선택한 날짜를 현재상태 날짜에 대입
+    fetchMatches(currentDate); // fetchMatches 함수 호출
+    createDateButtons(currentDate);
+  });
+  // 날짜를 증가시키는 함수 (다음 날)
+  function nextDay() {
+    const setDate = new Date(currentDate); // 현재상태 날짜 (달력에서 선택된 날짜 or 디폴트(오늘)날짜)
+    setDate.setDate(setDate.getDate() + 1); // 하루 증가
+    currentDate = setDate; //다시 현재 상태 날짜
+    createDateButtons(currentDate); // 버튼 재생성
+  }
+
+  // 날짜를 감소시키는 함수 (이전 날)
+  function prevDay() {
+    const setDate = new Date(currentDate);
+    setDate.setDate(setDate.getDate() - 1); // 하루 감소
+    currentDate = setDate;
+    createDateButtons( currentDate); // 버튼 재생성
+  }
+
+  // 이벤트 리스너 추가
+  document.getElementById('nextDay').addEventListener('click', nextDay);
+  document.getElementById('prevDay').addEventListener('click', prevDay);
+  // 페이지 로드 시 버튼 생성
+
+</script>
+
+</body>
+</html>

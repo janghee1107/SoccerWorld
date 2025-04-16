@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta id="_csrf" name="_csrf" th:content="${_csrf.token}"/>
+  <meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.headerName}"/>
+  <title>Football Fixtures</title>
+  <link href="/static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/static/css/main-style.css" rel="stylesheet">
+  <link href="/static/css/style.css" rel="stylesheet">
+  <link href="/static/css/all.css" rel="stylesheet">
+  <link href="/static/css/prediction2.css" rel="stylesheet">
+  <link href="/static/css/prediction-callender.css" rel="stylesheet" >
+  <link href="/static/css/standings.css" rel="stylesheet">
+  <link href="/static/css/main-style.css" rel="stylesheet">
+  <script src="https://kit.fontawesome.com/c0890a4f25.js" crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+<nav th:insert="~{/fragments/fragments :: nav}"></nav>
+<br>
+
+<div class="container">
+    <div class="schedule-container">
+      <div class="main-name">
+        <h2>
+          <th:block th:switch="${leagueName}">
+            <span th:case="'PL'">프리미어리그</span>
+            <span th:case="'PD'">라리가</span>
+            <span th:case="'BL1'">분데스리가</span>
+            <span th:case="'SA'">세리에 A</span>
+          </th:block>
+        </h2>
+      </div>
+      <div class="calender">
+        <input type="date" class="date-input hidden" id="dateInput" />
+      </div>
+      <div class="header-name">
+        날짜
+      </div>
+      <div class="date-selector" id="dateSelector">
+        <button class="arrow-btn" id="prevDay"><i class="fa-solid fa-angle-left"></i></button>
+        <div class="dateButtons" id="dateButtons"></div>
+        <button class="arrow-btn" id="nextDay"><i class="fa-solid fa-angle-right"></i></button>
+      </div>
+
+      <div class="header-name">
+        라운드
+      </div>
+      <div class="round-selector" id="roundSelector">
+        <button class="arrow-btn" id="prevRound"><i class="fa-solid fa-angle-left"></i></button>
+        <div class="round-buttons" id="roundButtons"></div>
+        <button class="arrow-btn" id="nextRound"><i class="fa-solid fa-angle-right"></i></button>
+      </div>
+
+      <!-- Match Schedule will appear here -->
+      <div class="match-container" id="match-container">
+        <div class="match" th:fragment="matchList" th:if="${Games != null && !#lists.isEmpty(Games)}" th:each="game : ${Games}" th:data-round="${game.round != null ? game.round : ''}">
+            <div class="match-header">
+              <span th:data-date="${game.dateTime}" class="match-date"></span>
+              <span th:text="'(' + ${game.round} + '/' + (${game.league} == 'BL1' ? '34' : '38') + ')'"></span>
+              <th:block th:switch="${game.league}">
+                <span th:case="'PL'">프리미어리그</span>
+                <span th:case="'PD'">라리가</span>
+                <span th:case="'BL1'">분데스리가</span>
+                <span th:case="'SA'">세리에 A</span>
+              </th:block>
+            </div>
+            <div class="match-body">
+              <div class="team-home" th:attr="onclick=${#authentication.name != 'anonymousUser'} ? 'handleClick(\'' + ${#authentication.name} + '\',' + ${#authentication.principal.memberId} + ',' + ${game.gameId} + ',' + 1 + ')' : 'handleClick()'">
+                <img th:src="${game.homeTeamDto.logo}" class="team-logo">
+                <div class="team-info">
+                  <span class="team-name" th:text="${game.homeTeamDto.name}"></span>
+                  <span class="team-percentage" th:text="${predictions[game.gameId] != null and predictions[game.gameId].homeWin != null ? predictions[game.gameId].homeWin + '%' : '0%'}"></span>
+                </div>
+                <span class="team-score"  style="margin-left: auto !important;" th:text="${game.homeScore}"></span>
+              </div>
+              <div class="draw" th:attr="onclick=${#authentication.name != 'anonymousUser'} ? 'handleClick(\'' + ${#authentication.name} + '\',' + ${#authentication.principal.memberId} + ',' + ${game.gameId} + ',' + 0 + ')' : 'handleClick()'">
+                <div class="draw-info">
+                  <span class="draw-title">무승부</span>
+                  <span class="draw-percentage" th:text="${predictions[game.gameId] != null and predictions[game.gameId].draw != null ? predictions[game.gameId].draw + '%' : '0%'}"></span>
+                </div>
+              </div>
+              <div class="team-away" th:attr="onclick=${#authentication.name != 'anonymousUser'} ? 'handleClick(\'' + ${#authentication.name} + '\',' + ${#authentication.principal.memberId} + ',' + ${game.gameId} + ',' + 2 + ')' : 'handleClick()'">
+                <span class="team-score"  style="margin-right: auto !important;" th:text="${game.awayScore}"></span>
+                <div class="team-info">
+                  <span class="team-name" th:text="${game.awayTeamDto.name}"></span>
+                  <span class="team-percentage" th:text="${predictions[game.gameId] != null and predictions[game.gameId].awayWin != null ? predictions[game.gameId].awayWin + '%' : '0%'}"></span>
+                </div>
+                <div>
+                  <img th:src="${game.awayTeamDto.logo}" class="team-logo">
+                </div>
+              </div>
+            </div>
+        </div>
+<!--        <div th:include="~{fragments/game-list :: postList}"></div>-->
+        <!-- Add more matches here -->
+        <div class="null-text" th:unless="${Games != null && !#lists.isEmpty(Games)}">
+          <h2>
+            해당 날짜에 경기가없습니다. 다른 일자를 선택해주세요!
+          </h2>
+        </div>
+      </div>
+      <button class="loadMoreBtn" th:if="${isRound !=null && !isRound.isEmpty()}" id="loadMoreBtn" onclick="loadMorePosts()" style="display:block; margin:20px auto; padding:10px 20px;">더 보기</button>
+
+    </div>
+    <script th:inline="javascript">
+      let currentDate = [[${today}]]; // 현재 날짜 저장
+      const daysToShow = 7; // 표시할 날짜 수
+      let currentRound = [[${currentRound}]];
+      let lastRound = parseInt($("#match-container div.match:last").attr("data-round")) + 1;
+      // 이미 현재 라운드불러온상태이며 다음 라운드 로드(loadMorePosts())시에 다음번째 라운드를 보여줘야하기 때문에 + 1
+      const minRound = 1;      // 최소 라운드 값
+      const maxRound = 38;     // 최대 라운드 값 (예시)
+      let leagueParam = [[${leagueName}]];
+
+      function loadMorePosts() {
+        $("#loadMoreBtn").text("로딩 중...");
+
+        $.get("/posts", { leagueParam:leagueParam, lastRound: lastRound }, function (data) {
+          $("#match-container").append(data); // 새로운 받은 데이터를 <div match-container> 요소 추가
+          lastRound = parseInt(lastRound) + 1;
+          formatMatchDate();
+
+          if (!lastRound) {
+            $("#loadMoreBtn").hide(); // 더 이상 데이터가 없으면 버튼 숨김
+          } else {
+            $("#loadMoreBtn").text("더 보기");
+          }
+
+          if(!data) {
+            alert("마지막 라운드입니다");
+            $("#loadMoreBtn").hide();
+          }
+
+        });
+      }
+
+      function formatMatchDate(){
+        document.querySelectorAll("span.match-date").forEach(function (element) {
+          let rawDate = element.getAttribute("data-date"); // "2024-08-17 04:00:00"
+          if (rawDate) {
+            let dateObj = new Date(rawDate);
+            let year = dateObj.getFullYear();
+            let month = dateObj.getMonth() + 1; // 월은 0부터 시작하므로 +1
+            let day = dateObj.getDate();
+            let dayNames = ["일", "월", "화", "수", "목", "금", "토"];
+            let dayOfWeek = dayNames[dateObj.getDay()]; // 요일 가져오기
+
+            let hours = dateObj.getHours();
+            let minutes = dateObj.getMinutes().toString().padStart(2, "0"); // 두 자리로 맞추기
+            let period = hours < 12 ? "오전" : "오후"; // 오전/오후 구분
+            hours = hours % 12 || 12; // 12시간제로 변환
+
+            let formattedDate = `${year}. ${month}. ${day}. (${dayOfWeek}) ${period} ${hours}:${minutes}`;
+            element.textContent = formattedDate;
+          }
+        });
+      }
+
+      // 날짜 버튼을 생성하는 함수
+      document.addEventListener('DOMContentLoaded', function() {
+        createDateButtons(currentDate); // 달력에서 날짜를 지정하지않으면 오늘 날짜 기준으로 버튼생성
+        renderRoundButtons();
+      });
+
+      document.addEventListener("DOMContentLoaded", function () {
+        formatMatchDate();
+      });
+
+      function createDateButtons(startDate) {
+        const dateButtons = document.getElementById('dateButtons');
+        dateButtons.innerHTML = ''; // 기존 버튼 제거
+
+        for (let i = 0; i < daysToShow; i++) {
+          const date = new Date(startDate);
+          date.setDate(date.getDate() + i); // 현재상태 날짜 기준으로 7개 일정버튼 생성
+
+          const formattedDate = date.toISOString().split('T')[0]; // YYYY-MM-DD 형식으로 바꿈
+          const buttonText = `${date.getMonth() + 1}.${date.getDate()}.${date.toLocaleDateString('ko-KR', { weekday: 'short' })}`; // "MM.DD.요일" 형식 표시
+
+          const button = document.createElement('button');
+          button.className = 'date-btn';
+          button.setAttribute('data-date', formattedDate);
+          button.innerText = buttonText;
+
+          // 버튼 클릭 이벤트 추가
+          button.addEventListener('click', function() {
+            window.location.href = '/fixture/schedule?league=' + leagueParam + '&selectedDate=' + formattedDate + '&round=' + currentRound
+          });
+
+          dateButtons.appendChild(button); // 버튼을 dateButtons에 추가
+        }
+        // 기본값으로 오늘 날짜의 버튼 클릭
+
+      }
+      function nextDay() { // 날짜를 증가시키는 함수 (다음 날)
+        const setDate = new Date(currentDate); // 현재상태 날짜 (달력에서 선택된 날짜 or 디폴트(오늘)날짜)
+        setDate.setDate(setDate.getDate() + 1); // 하루 증가
+        currentDate = setDate; //다시 현재 상태 날짜
+        createDateButtons(currentDate); // 버튼 재생성
+      }
+      function prevDay() { // 날짜를 감소시키는 함수 (이전 날)
+        const setDate = new Date(currentDate);
+        setDate.setDate(setDate.getDate() - 1); // 하루 감소
+        currentDate = setDate;
+        createDateButtons(currentDate); // 버튼 재생성
+      }
+
+      document.getElementById('nextDay').addEventListener('click', nextDay);     // 이벤트 리스너 추가
+      document.getElementById('prevDay').addEventListener('click', prevDay);
+
+      document.getElementById('dateInput').addEventListener('change', function() {  // 페이지 로드 시 버튼 생성
+        currentDate = this.value; // 선택한 날짜를 현재상태 날짜에 대입
+        window.location.href = '/fixture/schedule?league=' + leagueParam + 'selectedDate=' + currentDate +  '&round=' + currentRound
+      });
+
+      function renderRoundButtons() { //라운드 버튼 추가
+        const roundButtonsContainer = document.getElementById("roundButtons");
+        roundButtonsContainer.innerHTML = ""; // 기존 버튼 초기화
+
+        let startRound = currentRound; //페이지 표시 시작 라운드
+        let endRound = currentRound + 6; //페이지 표시 마지막 라운드
+
+        if (endRound > maxRound) { // 38라운드 기준 33라운드 이상 조회시 33 ~ 38 6개버튼 생성밖에되지않음
+          startRound -= (endRound - maxRound); // 초과한 만큼 startRound를 당긴다
+          endRound = maxRound; // endRound는 maxRound로 설정
+        }
+
+        for (let round = startRound; round <= endRound; round++) {
+          let btn = document.createElement("button");
+          btn.classList.add("round-btn");
+          btn.textContent = round;
+          btn.setAttribute("data-round", round);
+
+          if (round === currentRound) btn.classList.add("active"); // 현재 라운드 버튼 활성화
+
+          btn.addEventListener('click', function() {
+            window.location.href = '/fixture/schedule?league=' + leagueParam + '&round=' + round
+          });
+
+          roundButtonsContainer.appendChild(btn);
+        }
+
+        updateButtonState();
+      }
+
+      function updateButtonState() {
+        document.getElementById("prevRound").disabled = currentRound <= minRound;
+        document.getElementById("nextRound").disabled = currentRound + 6 >= maxRound;
+      }
+
+      document.getElementById("prevRound").addEventListener("click", function () {
+        if (currentRound > minRound) {
+          currentRound--;
+          renderRoundButtons();
+        }
+      });
+      document.getElementById("nextRound").addEventListener("click", function () {
+        if (currentRound + 6 < maxRound) {
+          currentRound++;
+          renderRoundButtons();
+        }
+      });
+
+      // 초기 버튼 생성
+      // renderRoundButtons();
+
+
+    </script>
+
+
+</div>
+
+<script>
+    function handleClick(username, memberId, fixtureId, result) {
+        fetch('/security/isLoggedIn')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(isLoggedIn => {
+                if (!isLoggedIn) {
+                    alert("dksl로그인 이후에 사용해주세요");
+                } else {
+                    console.log(isLoggedIn);
+                    selectTeam(memberId, fixtureId, result);
+                }
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+    }
+    function selectTeam(memberId,gameId,result) {
+        const header = document.querySelector('meta[name="_csrf_header"]').content;
+        const token = document.querySelector('meta[name="_csrf"]').content;
+    fetch('/prediction', { //스프링 시큐리티 사용하면 POST요청시 시큐리티 POSt요청은 CSRF보호를 하고있기 때문에 CSRF 토큰 설정을 해야 POST 요청가능
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json', // JSON 형식으로 설정
+        [header] : token
+      },
+      body: JSON.stringify({
+        gameId: gameId,
+        result: result,
+        memberId: memberId
+      }),
+    }).then((response) => {
+        if (response.ok) {
+          alert("성공");
+        } else {
+          alert("이미 예측하셨습니다.");
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+        })
+
+  }
+
+</script>
+
+</body>
+</html>

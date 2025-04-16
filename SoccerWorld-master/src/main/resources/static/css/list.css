@@ -1,0 +1,59 @@
+/* 상위 flex 컨테이너 설정 */
+.d-flex.align-items-center {
+    display: flex;
+    align-items: center;
+}
+
+/* 게시글 목록 헤더 */
+.post-header {
+    color: black; /* 글씨색 검은색 */
+    border: 2px solid #1e1c54; !important; /* 테두리 색상 */
+    font-weight: bold; /* 글씨 강조 */
+    background-color: #f8f9fa; /* 배경색 (가독성 향상) */
+    border-radius: 5px; /* 테두리 모서리 둥글게 */
+}
+
+
+/* memberId 컨테이너: 전체의 15% 차지 */
+.d-flex.align-items-center > div:first-child {
+    flex: 0 0 15%;
+    text-align: center;
+}
+
+/* 썸네일 컨테이너: 전체의 10% 차지 */
+.d-flex.align-items-center > div:nth-child(2) {
+    flex: 0 0 10%;
+    text-align: center;
+}
+
+/* 제목 컨테이너: 전체의 45% 차지 */
+.d-flex.align-items-center > h3.card-title {
+    flex: 0 0 45%;
+    text-align: center;
+    margin: 0;
+}
+
+/* 정보 컨테이너: 전체의 30% 차지하고, 내부에 flex 배치 */
+.d-flex.align-items-center > div.ms-auto {
+    flex: 0 0 30%;
+    display: flex;
+    justify-content: space-between;
+}
+
+/* 작성일 */
+.d-flex.ms-auto span:nth-child(1) {
+    flex: 0 0 60%;
+    text-align: center;
+}
+
+/* 추천수 */
+.d-flex.ms-auto span:nth-child(2) {
+    flex: 0 0 20%;
+    text-align: center;
+}
+
+/* 조회수 */
+.d-flex.ms-auto span:nth-child(3) {
+    flex: 0 0 20%;
+    text-align: center;
+}

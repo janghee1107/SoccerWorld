@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>리그 및 선수 순위</title>
+    <!-- Bootstrap core CSS (Bootstrap 5) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Fontawesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
+    <!-- Custom styles -->
+    <link href="styles.css" rel="stylesheet">
+    <link href="/static/css/style.css" rel="stylesheet">
+    <link href="/static/css/main-style.css" rel="stylesheet">
+</head>
+<body>
+
+<!-- 네비게이션 바 -->
+<nav th:insert="/fragments/fragments :: nav"></nav>
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 class="card-title">리그 순위</h3>
+                    <div>
+                        <a href="#" id="leagueButton" class="btn btn-primary" onclick="showLeagueRanking()">리그 순위</a>
+                        <a href="#" id="playerButton" class="btn btn-secondary" onclick="showPlayerRanking()">선수 순위</a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row justify-content-end align-items-center mb-3">
+                        <div class="col-lg-4 d-flex justify-content-end">
+                            <div class="dropdown me-2">
+                                <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownSeasonButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                    시즌 선택
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownSeasonButton">
+                                    <li><a class="dropdown-item" href="#" onclick="changeSeason('2020-2021')">2020-2021</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="changeSeason('2021-2022')">2021-2022</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="changeSeason('2022-2023')">2022-2023</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="changeSeason('2023-2024')">2023-2024</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="changeSeason('2024-2025')">2024-2025</a></li>
+                                </ul>
+                            </div>
+
+                            <div class="dropdown" id="leagueComboBox">
+                                <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                    리그 선택
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <li><a class="dropdown-item" href="#" onclick="changeLeague('eplRanking', 'EPL')">EPL</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="changeLeague('laligaRanking', 'LA LIGA')">LA LIGA</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="changeLeague('serieaRanking', 'SERIE A')">SERIE A</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="changeLeague('bundesligaRanking', 'BUNDESLIGA')">BUNDESLIGA</a></li>
+                                </ul>
+                            </div>
+
+                            <div class="dropdown" id="playerComboBox" style="display:none;">
+                                <button class="btn btn-primary dropdown-toggle" type="button" id="playerDropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                    리그 선택
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="playerDropdownMenuButton">
+                                    <li><a class="dropdown-item" href="#" onclick="changePlayerLeague('eplPlayerRanking', 'EPL')">EPL</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="changePlayerLeague('laligaPlayerRanking', 'LA LIGA')">LA LIGA</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="changePlayerLeague('serieaPlayerRanking', 'SERIE A')">SERIE A</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="changePlayerLeague('bundesligaPlayerRanking', 'BUNDESLIGA')">BUNDESLIGA</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 리그 순위 테이블 -->
+                    <div id="leagueRanking">
+                        <table class="ranking-table table table-striped">
+                            <thead>
+                            <tr>
+                                <th>순위</th>
+                                <th>팀명</th>
+                                <th>승점</th>
+                                <th>경기수</th>
+                                <th>승</th>
+                                <th>무</th>
+                                <th>패</th>
+                                <th>골</th>
+                                <th>실점</th>
+                            </tr>
+                            </thead>
+                            <tbody id="eplRanking">
+                            <tr style="background-color: white;">
+                                <td>1</td>
+                                <td>맨시티</td>
+                                <td>90</td>
+                                <td>38</td>
+                                <td>30</td>
+                                <td>5</td>
+                                <td>3</td>
+                                <td>99</td>
+                                <td>32</td>
+                            </tr>
+                            <tr style="background-color: white;">
+                                <td>2</td>
+                                <td>리버풀</td>
+                                <td>89</td>
+                                <td>38</td>
+                                <td>28</td>
+                                <td>5</td>
+                                <td>5</td>
+                                <td>94</td>
+                                <td>26</td>
+                            </tr>
+                            </tbody>
+                            <tbody id="laligaRanking" style="display: none;">
+                            <tr>
+                                <td>1</td>
+                                <td>바르셀로나</td>
+                                <td>85</td>
+                                <td>38</td>
+                                <td>26</td>
+                                <td>7</td>
+                                <td>5</td>
+                                <td>86</td>
+                                <td>33</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>레알 마드리드</td>
+                                <td>83</td>
+                                <td>38</td>
+                                <td>25</td>
+                                <td>8</td>
+                                <td>5</td>
+                                <td>80</td>
+                                <td>35</td>
+                            </tr>
+                            </tbody>
+                            <tbody id="serieaRanking" style="display: none;">
+                            <tr>
+                                <td>1</td>
+                                <td>유벤투스</td>
+                                <td>78</td>
+                                <td>38</td>
+                                <td>24</td>
+                                <td>6</td>
+                                <td>8</td>
+                                <td>70</td>
+                                <td>30</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>인테르</td>
+                                <td>77</td>
+                                <td>38</td>
+                                <td>23</td>
+                                <td>8</td>
+                                <td>7</td>
+                                <td>69</td>
+                                <td>32</td>
+                            </tr>
+                            </tbody>
+                            <tbody id="bundesligaRanking" style="display: none;">
+                            <tr>
+                                <td>1</td>
+                                <td>바이에른 뮌헨</td>
+                                <td>91</td>
+                                <td>34</td>
+                                <td>29</td>
+                                <td>4</td>
+                                <td>1</td>
+                                <td>99</td>
+                                <td>22</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>레버쿠젠</td>
+                                <td>70</td>
+                                <td>34</td>
+                                <td>21</td>
+                                <td>7</td>
+                                <td>6</td>
+                                <td>80</td>
+                                <td>45</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- 선수 순위 테이블 (초기에는 숨김) -->
+                    <div id="playerRanking" style="display: none;">
+                        <table class="ranking-table table table-striped">
+                            <thead>
+                            <tr>
+                                <th>순위</th>
+                                <th>선수명</th>
+                                <th>팀명</th>
+                                <th>골</th>
+                                <th>어시</th>
+                                <th>공격포인트</th>
+                            </tr>
+                            </thead>
+                            <tbody id="eplPlayerRanking">
+                            <tr>
+                                <td>1</td>
+                                <td>호날두</td>
+                                <td>맨유</td>
+                                <td>30</td>
+                                <td>10</td>
+                                <td>40</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>메시</td>
+                                <td>PSG</td>
+                                <td>25</td>
+                                <td>12</td>
+                                <td>37</td>
+                            </tr>
+                            </tbody>
+                            <tbody id="laligaPlayerRanking" style="display:none;">
+                            <tr>
+                                <td>1</td>
+                                <td>벤제마</td>
+                                <td>레알 마드리드</td>
+                                <td>27</td>
+                                <td>10</td>
+                                <td>37</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>비니시우스</td>
+                                <td>레알 마드리드</td>
+                                <td>23</td>
+                                <td>12</td>
+                                <td>35</td>
+                            </tr>
+                            </tbody>
+                            <tbody id="serieaPlayerRanking" style="display:none;">
+                            <tr>
+                                <td>1</td>
+                                <td>디발라</td>
+                                <td>유벤투스</td>
+                                <td>18</td>
+                                <td>7</td>
+                                <td>25</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>라우타로</td>
+                                <td>인테르</td>
+                                <td>20</td>
+                                <td>8</td>
+                                <td>28</td>
+                            </tr>
+                            </tbody>
+                            <tbody id="bundesligaPlayerRanking" style="display:none;">
+                            <tr>
+                                <td>1</td>
+                                <td>레반도프스키</td>
+                                <td>바이에른 뮌헨</td>
+                                <td>29</td>
+                                <td>5</td>
+                                <td>34</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>뮐러</td>
+                                <td>바이에른 뮌헨</td>
+                                <td>22</td>
+                                <td>12</td>
+                                <td>34</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap core JavaScript (Bootstrap 5) -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function showLeagueRanking() {
+        document.getElementById('leagueRanking').style.display = 'block';
+        document.getElementById('playerRanking').style.display = 'none';
+        document.getElementById('leagueComboBox').style.display = 'block';
+        document.getElementById('playerComboBox').style.display = 'none';
+        document.getElementById('leagueButton').classList.add('btn-primary');
+        document.getElementById('leagueButton').classList.remove('btn-secondary');
+        document.getElementById('playerButton').classList.add('btn-secondary');
+        document.getElementById('playerButton').classList.remove('btn-primary');
+    }
+
+    function showPlayerRanking() {
+        document.getElementById('leagueRanking').style.display = 'none';
+        document.getElementById('playerRanking').style.display = 'block';
+        document.getElementById('leagueComboBox').style.display = 'none';
+        document.getElementById('playerComboBox').style.display = 'block';
+        document.getElementById('playerButton').classList.add('btn-primary');
+        document.getElementById('playerButton').classList.remove('btn-secondary');
+        document.getElementById('leagueButton').classList.add('btn-secondary');
+        document.getElementById('leagueButton').classList.remove('btn-primary');
+    }
+
+    function changeLeague(leagueId, leagueName) {
+        const leagues = ['eplRanking', 'laligaRanking', 'serieaRanking', 'bundesligaRanking'];
+        leagues.forEach(league => {
+            document.getElementById(league).style.display = "none";
+        });
+        document.getElementById(leagueId).style.display = "table-row-group";
+        document.getElementById('dropdownMenuButton').innerHTML = leagueName;
+    }
+
+    function changePlayerLeague(leagueId, leagueName) {
+        const playerLeagues = ['eplPlayerRanking', 'laligaPlayerRanking', 'serieaPlayerRanking', 'bundesligaPlayerRanking'];
+        playerLeagues.forEach(league => {
+            document.getElementById(league).style.display = "none";
+        });
+        document.getElementById(leagueId).style.display = "table-row-group";
+        document.getElementById('playerDropdownMenuButton').innerHTML = leagueName;
+    }
+
+    function changeSeason(season) {
+        document.getElementById('dropdownSeasonButton').innerHTML = season + ' 시즌';
+    }
+
+    showLeagueRanking();
+</script>
+</body>
+</html>

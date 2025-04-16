@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Football Fixtures</title>
+  <link rel="stylesheet" href="/static/css/fixture.css">
+  <link rel="stylesheet" href="/static/css/calender.css">
+  <link href="/static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/static/css/main-style.css" rel="stylesheet">
+  <link href="/static/css/style.css" rel="stylesheet">
+  <link href="/static/css/all.css" rel="stylesheet">
+  <link href="/static/css/standings.css" rel="stylesheet">
+  <meta id="_csrf" name="_csrf" th:content="${_csrf.token}"/>
+  <meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.headerName}"/>
+  <script src="https://kit.fontawesome.com/c0890a4f25.js" crossorigin="anonymous"></script>
+</head>
+<body>
+<nav th:insert="~{/fragments/fragments :: nav}"></nav>
+<br>
+<div class="container">
+  <div class="schedule-container">
+    <h2>라리가 관리자</h2>
+
+    <div>
+      <button class="call-btn" onclick="checkTeamApi(leagueNum)">
+        팀 불러오기
+      </button>
+      <button class="call-btn" onclick="checkGames(0,leagueNum)">
+        한시즌 불러오기
+      </button>
+    </div>
+    <div class="calender">
+      <input type="date" class="date-input hidden" id="dateInput" />
+    </div>
+
+    <div class="date-selector" id="dateSelector">
+      <button class="arrow-btn" id="prevDay"><i class="fa-solid fa-angle-left"></i></button>
+      <div class="dateButtons" id="dateButtons"></div>
+      <button class="arrow-btn" id="nextDay"><i class="fa-solid fa-angle-right"></i></button>
+    </div>
+
+    <!-- Match Schedule will appear here -->
+    <div class="match-schedule" id="matchSchedule">
+      <h3>경기 데이터를 확인할 일정을 선택하세요</h3>
+    </div>
+  </div>
+</div>
+
+<script>
+  const header = document.querySelector('meta[name="_csrf_header"]').content;
+  const token = document.querySelector('meta[name="_csrf"]').content;
+  let currentDate = new Date(); // 현재 날짜 저장
+  const leagueNum = 2014;
+  const daysToShow = 7; // 표시할 날짜 수
+  // 날짜 버튼을 생성하는 함수
+  document.addEventListener('DOMContentLoaded', function() {
+    createDateButtons(currentDate); // 달력에서 날짜를 지정하지않으면 오늘 날짜 기준으로 버튼생성
+  });
+
+
+  function createDateButtons(startDate) { //처음 접속시 일주일치 날짜 선택하는 버튼 생성
+    const dateButtons = document.getElementById('dateButtons');
+    dateButtons.innerHTML = ''; // 기존 버튼 제거
+
+    for (let i = 0; i < daysToShow; i++) {
+      const date = new Date(startDate);
+      date.setDate(date.getDate() + i); // 현재상태 날짜 기준으로 7개 일정버튼 생성
+
+      const formattedDate = date.toISOString().split('T')[0]; // YYYY-MM-DD 형식으로 바꿈
+      const buttonText = `${date.getMonth() + 1}.${date.getDate()}.${date.toLocaleDateString('ko-KR', { weekday: 'short' })}`; // "MM.DD.요일" 형식 표시
+
+      const button = document.createElement('button');
+      button.className = 'date-btn';
+      button.setAttribute('data-date', formattedDate);
+      button.innerText = buttonText;
+
+      // 버튼 클릭 이벤트 추가
+      button.addEventListener('click', function() {
+        checkGames(formattedDate,leagueNum); // 해당 날짜의 경기 일정 불러오기
+      });
+
+      dateButtons.appendChild(button); // 버튼을 dateButtons에 추가
+    }
+    // 기본값으로 오늘 날짜의 버튼 클릭
+
+  }
+  // 선택한 날짜의 경기 일정 불러오기
+  document.getElementById('dateInput').addEventListener('change', function() { //달력 날짜 선택시 선택한 날짜 경기 뷰 작동
+    currentDate = this.value; // 선택한 날짜를 현재상태 날짜에 대입
+    checkGames(currentDate,leagueNum); // fetchMatches 함수 호출
+    createDateButtons(currentDate);
+  });
+  function nextDay() {
+    const setDate = new Date(currentDate); // 현재상태 날짜 (달력에서 선택된 날짜 or 디폴트(오늘)날짜)
+    setDate.setDate(setDate.getDate() + 1); // 하루 증가
+    currentDate = setDate; //다시 현재 상태 날짜
+    createDateButtons(currentDate); // 버튼 재생성
+  }
+  // 날짜를 감소시키는 함수 (이전 날)
+  function prevDay() {
+    const setDate = new Date(currentDate);
+    setDate.setDate(setDate.getDate() - 1); // 하루 감소
+    currentDate = setDate;
+    createDateButtons( currentDate); // 버튼 재생성
+  }
+
+  // 이벤트 리스너 추가
+  document.getElementById('nextDay').addEventListener('click', nextDay);
+  document.getElementById('prevDay').addEventListener('click', prevDay);
+  // 페이지 로드 시 버튼 생성
+
+  function checkGames(selectedDate,leagueNum) {
+    fetch(`/admin/schedule?selectedDate=${selectedDate}&leagueNum=${leagueNum}`)
+            .then(response => {
+              if (!response.ok) {
+                throw new Error('Network response was not ok: ' + response.statusText);
+              }
+              return response.json();
+            })
+            .then(data => {
+              const matchScheduleDiv = document.getElementById('matchSchedule');
+              matchScheduleDiv.innerHTML = ''; // Clear existing content
+
+              const matches = data.matches;
+              const matchData = JSON.stringify(data).replace(/"/g, '&quot;'); // JSON 데이터 이스케이프 문자열로변환
+              //위코드는 데이터를 백에서 사용할시 문자열로변환하지않아도되지만 다음상황은 html에 데이터를 넘기고 다시 자바스크립트로 보낼예정,
+              //그렇기 때문에 html속성 값에 json데이터를 포함하기위해선 파싱오류를 피하고 안전하기사용하기위해 사용해야함
+              // JSON 문자열을 HTML 속성으로 전달하는 경우, JSON의 큰따옴표(")가 HTML의 속성 구문을 깨뜨릴 수 있음.
+              // 이를 방지하기 위해 문자열 내 큰따옴표를 HTML 엔티티(&quot;)로 변환함
+              if (matches && matches.length > 0) {
+                matchScheduleDiv.innerHTML =
+                        `<h3>${selectedDate} 경기일자</h3>
+                         <button class="class-btn" onclick="insertGame(JSON.stringify(${matchData}))">
+                              경기 넣기
+                         </button>`;
+                matches.forEach(match => {
+                  const matchCard = `
+<div class="match-list">
+    <div class="match">
+            <div class="match-header">
+                <span class="match-header-text">${match.utcDate}</span>
+                <span class="match-header-text">${match.matchday} ROUND</span>
+                ${match.status === 'TIMED' ? `<span class="prediction-success">경기 전</span>` : ''}
+                ${match.status === 'FINISHED' ? `<span class="prediction-finished">경기 종료</span>` : ''}
+                ${match.status === 'First Half' ? `<span class="prediction-playing">경기 전반</span>` : ''}
+                ${match.status === 'Second Half' ? `<span class="prediction-playing">경기 후반</span>` : ''}
+                ${match.status === 'Halftime' ? `<span class="prediction-halftime">하프 타임</span>` : ''}
+            </div>
+            <div class="match-body">
+                <div class="team">
+                    <div class="team-info">
+                        <div class="team-logo">
+                            <img src="${match.homeTeam.crest}" alt="Team Logo">
+                        </div>
+                        <div class="team-percentage"><span>${match.homeTeam.name}</span></div>
+                    </div>
+                    <div class="score"><span>${match.score.fullTime.home !== null ? match.score.fullTime.home : 0}</span></div>
+                </div>
+
+                <div class="vs-section">
+                    <div class="team-vs">
+                        <div class="vs-logo">
+                            <img src="${match.competition.emblem}" alt="VS Logo">
+                        </div>
+                        <div class="vs-text">vs</div>
+                    </div>
+                </div>
+
+                <div class="team">
+                    <div class="team-info">
+                        <div class="team-logo">
+                            <img src="${match.awayTeam.crest}" alt="Team Logo">
+                        </div>
+                        <div class="team-percentage"><span>${match.awayTeam.name}</span></div>
+                    </div>
+                    <div class="score"><span>${match.score.fullTime.away !== null ? match.score.fullTime.away : 0}</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+`;
+                  matchScheduleDiv.insertAdjacentHTML('beforeend', matchCard);
+                });
+              } else {
+                matchScheduleDiv.innerHTML = `<h3>${selectedDate} 경기는 없습니다.</h3>`;
+              }
+            })
+            .catch(err => {
+              console.error('Error fetching matches:', err);
+              document.getElementById('matchSchedule').innerHTML = '<p>Error loading matches. Please try again later.</p>';
+            });
+  }
+  function checkTeamApi(leagueNum) {  //팀 정보 불러오기
+    fetch(`/teamInfo?leagueNum=${leagueNum}`)
+            .then(response => {
+              if (!response.ok) {
+                throw new Error('Network response was not ok: ' + response.statusText);
+              }
+              return response.json();
+            })
+            .then(data => {
+              const matchScheduleDiv = document.getElementById('matchSchedule');
+              matchScheduleDiv.innerHTML = ''; // Clear existing content
+              // const totalData = data;
+              const league = data.competition;
+              const teams = data.teams;
+              const teamsData = JSON.stringify(data).replace(/"/g, '&quot;');
+              if (teams && teams.length > 0) {
+                matchScheduleDiv.innerHTML =
+                        `<h3>현 프리미어리그 팀 정보</h3>
+                          <button class="date-btn" onclick="insertTeams(JSON.stringify(${teamsData}))">
+                              넣기
+                          </button>`;
+                teams.forEach(team => {
+                  const matchCard = `
+
+    <div>
+    <table class="standings-table">
+      <thead>
+      <tr>
+        <th>League</th>
+        <th>Team</th>
+        <th>TeamId</th>
+        <th>Stadium</th>
+        <th>Location</th>
+      </tr>
+      </thead>
+      <tbody>
+      <!-- Example Data -->
+      <tr>
+        <td>
+          <img src="${league.emblem}">
+        </td>
+        <td>
+          <img src="${team.crest}">
+          ${team.name}
+        </td>
+        <td>
+          ${team.id}
+        </td>
+        <td>
+          ${team.venue}
+        </td>
+        <td>
+          ${team.address}
+        </td>
+      </tr>
+      <!-- Add more rows dynamically -->
+      </tbody>
+    </table>
+  </div>
+`;
+                  matchScheduleDiv.insertAdjacentHTML('beforeend', matchCard);
+                });
+              } else {
+                matchScheduleDiv.innerHTML = `<h3>리그 팀정보가 없습니다.</h3>`;
+              }
+            })
+            .catch(err => {
+              console.error('Error fetching matches:', err);
+              document.getElementById('matchSchedule').innerHTML = '<p>다시 시도해주세요.</p>';
+            });
+  }
+  function insertGame(matchData){ // 경기 데이터 DB 삽입
+    // const match = JSON.parse(matchData); 해당코드는 중간에 데이터 변환이 필요시 사용
+    fetch(`/admin/insertGame`, { //스프링 시큐리티 사용하면 POST요청시 시큐리티 POSt요청은 CSRF보호를 하고있기 때문에 CSRF 토큰 설정을 해야 POST 요청가능
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json', // JSON 형식으로 설정 대부분의 REST API는 요청 본문을 JSON 형식으로 처리하며, JSON은 문자열이므로 JSON.stringify가 필수
+        [header] : token
+      },
+      body: matchData ,  //해당 데이터는 이미 문자열이므로 stringify 미사용
+    }).then((response) => {
+      if (response.ok) {
+        alert("성공");
+        window.location.reload();
+      } else {
+        alert("다시 시도해주세요.");
+        throw new Error('Network response was not ok');
+      }
+    })
+            .catch(error => {
+              console.error('There was a problem with the fetch operation:', error);
+            })
+  }
+
+  function insertTeams(teamsData) { //팀 데이터 DB 삽입
+    fetch(`/admin/insertTeams`, { //스프링 시큐리티 사용하면 POST요청시 시큐리티 POSt요청은 CSRF보호를 하고있기 때문에 CSRF 토큰 설정을 해야 POST 요청가능
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json', // JSON 형식으로 설정 대부분의 REST API는 요청 본문을 JSON 형식으로 처리하며, JSON은 문자열이므로 JSON.stringify가 필수
+        [header] : token
+      },
+      body: teamsData //해당 데이터는 이미 문자열이므로 stringify 미사용
+    }).then((response) => {
+      if (response.ok) {
+        alert("성공");
+        window.location.reload();
+      } else {
+        alert("다시 시도해주세요.");
+        throw new Error('Network response was not ok');
+      }
+    })
+            .catch(error => {
+              console.error('There was a problem with the fetch operation:', error);
+            })
+  }
+
+
+
+</script>
+
+</body>
+</html>

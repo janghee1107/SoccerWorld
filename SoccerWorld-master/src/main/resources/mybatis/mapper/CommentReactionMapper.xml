@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="commentReactionMapper">
+    <!-- 댓글 반응 추가 -->
+    <insert id="insertCommentReaction" parameterType="idusw.soccerworld.domain.dto.CommentReactionDto">
+        INSERT INTO comment_reaction (comment_id, member_id, reaction_type)
+        VALUES (#{commentDto.commentId}, #{memberDto.memberId}, #{reactionType})
+        ON DUPLICATE KEY UPDATE
+            -- 같은 반응을 또 누르면 삭제 (reaction_type 그대로면 삭제),
+            -- 다른 반응이면 reaction_type만 교체
+            reaction_type = IF(reaction_type = VALUES(reaction_type), NULL, VALUES(reaction_type))
+    </insert>
+
+    <!-- 댓글 반응 삭제 -->
+    <delete id="deleteCommentReaction" parameterType="idusw.soccerworld.domain.dto.CommentReactionDto">
+        DELETE FROM comment_reaction
+        WHERE comment_id = #{commentDto.commentId} AND member_id = #{memberDto.memberId}
+    </delete>
+
+    <!-- 특정 댓글에 대해, 특정 사용자의 반응 내역 조회 -->
+    <select id="findCommentReactionByMember" parameterType="map" resultType="idusw.soccerworld.domain.dto.CommentReactionDto">
+        SELECT reaction_id, comment_id, member_id, reaction_type
+        FROM comment_reaction
+        WHERE comment_id = #{commentId} AND member_id = #{memberId}
+    </select>
+
+    <!-- 특정 댓글의 반응 개수를 집계 (UP, DOWN) -->
+    <select id="countCommentReactions" parameterType="long" resultType="map">
+        SELECT reaction_type, COUNT(*) AS count
+        FROM comment_reaction
+        WHERE comment_id = #{commentId}
+        GROUP BY reaction_type
+    </select>
+</mapper>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <title>선수 정보</title>
+  <link href="/static/css/all.css" rel="stylesheet">
+  <link href="/static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/static/css/style.css" rel="stylesheet">
+  <link href="/static/css/taehyun.css" rel="stylesheet"> <!-- 기존 CSS 파일 -->
+</head>
+<body>
+<div class="container mt-5">
+  <div class="row justify-content-center mb-4">
+    <div class="col-md-8">
+      <form class="input-group">
+        <input type="text" class="form-control" placeholder="팀 이름을 입력하세요..." aria-label="팀 검색">
+        <button class="btn btn-primary" type="submit">검색</button>
+      </form>
+    </div>
+  </div>
+
+
+  <h1 class="title-box my-5">호날두</h1> <!-- 텍스트 색상 적용 -->
+
+  <div class="row">
+    <div class="col-md-6">
+      <img src="/static/images/호날두.jpg" alt="호날두 이미지" class="img-fluid player-img"> <!-- 이미지 스타일 개선 -->
+    </div>
+    <div class="col-md-6">
+      <div class="player-info-table"> <!-- 표 레이아웃 적용 -->
+        <table class="table table-bordered"> <!-- table-bordered 클래스를 사용 -->
+          <tbody>
+          <tr>
+            <td class="blue-background">국적</td>
+            <td class="white-background">포르투갈</td>
+          </tr>
+          <tr>
+            <td class="blue-background">골</td>
+            <td class="white-background">1000골</td>
+          </tr>
+          <tr>
+            <td class="blue-background">어시스트</td>
+            <td class="white-background">1000어시</td>
+          </tr>
+          <tr>
+            <td class="blue-background">출생연도</td>
+            <td class="white-background">1899/10/10</td>
+          </tr>
+          <tr>
+            <td class="blue-background">트로피</td>
+            <td class="white-background">UEFA 챔피언스 리그 5회 우승</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="text-center mt-4">
+    <button class="btn btn-primary info-box">선수 평가하러 가기</button>
+  </div>
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="/static/vendor/jquery/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
+  <script src="/static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

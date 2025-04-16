@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="postMapper">
+    <select id="selectedCategory" resultMap="postResultMap">
+        SELECT p.post_id, p.title, p.content, p.up_count, p.down_count, p.view_count, p.regdate, p.picture,
+               c.category_id, c.name AS categoryName, m.member_id, m.name AS memberName
+        FROM post p
+                 INNER JOIN category c ON p.category_id = c.category_id
+                 INNER JOIN member m ON p.member_id = m.member_id
+        WHERE p.category_id = #{categoryId}
+        ORDER BY p.regdate DESC;
+    </select>
+
+    <insert id="create" parameterType="idusw.soccerworld.domain.dto.PostDto" useGeneratedKeys="true" keyProperty="postId">
+        INSERT INTO post(category_id, title, content, up_count, down_count, view_count, regdate, member_id, picture)
+        VALUES (#{categoryDto.categoryId}, #{title}, #{content}, 0, 0, 0, NOW(), #{memberDto.memberId}, #{picture})
+    </insert>
+
+    <update id="updateViewCount" parameterType="Long">    /* 조회수 */
+        update post set view_count=view_count +1 where post_id=#{postId}
+    </update>
+
+    <select id="findById" parameterType="Long" resultMap="postResultMap">
+        SELECT
+            p.post_id,
+            p.title,
+            p.content,
+            p.up_count,
+            p.down_count,
+            p.view_count,
+            p.regdate,
+            p.picture,
+            c.category_id,
+            c.name AS categoryName,
+            m.member_id,
+            m.name AS memberName
+        FROM post p
+                 INNER JOIN category c ON p.category_id = c.category_id
+                 INNER JOIN member m ON p.member_id = m.member_id
+        WHERE p.post_id = #{postId}
+    </select>
+
+
+    <update id="updatePost">
+        UPDATE post
+        SET category_id = #{categoryDto.categoryId}, title = #{title}, content = #{content}, regdate = NOW()
+        WHERE post_id = #{postId}
+    </update>
+
+    <update id="updatePicturePaths" parameterType="map"> -- post 수정 시 이미지 변경
+    UPDATE post
+    SET picture = #{picture}
+    WHERE post_id = #{postId}
+    </update>
+
+    <delete id="deletePost" parameterType="Long">
+        delete from post where post_id=#{postId}
+    </delete>
+
+    <update id="incrementUpCount" parameterType="idusw.soccerworld.domain.dto.PostDto">
+        UPDATE post
+        SET up_count = up_count + #{upCount}
+        WHERE post_id = #{postId}
+    </update>
+
+    <update id="incrementDownCount" parameterType="idusw.soccerworld.domain.dto.PostDto">
+        UPDATE post
+        SET down_count = down_count + #{downCount}
+        WHERE post_id = #{postId}
+    </update>
+
+    <!-- 1) 페이징된 리스트 -->
+    <select id="findPagedByCategory" resultMap="postResultMap" parameterType="map">
+        SELECT
+            p.post_id, p.title, p.content, p.up_count, p.down_count,
+            p.view_count, p.regdate, p.picture,
+            c.category_id, c.name AS categoryName,
+            m.member_id, m.name AS memberName
+        FROM post p
+                 INNER JOIN category c ON p.category_id = c.category_id
+                 INNER JOIN member m   ON p.member_id   = m.member_id
+        WHERE p.category_id = #{categoryId}
+        ORDER BY p.regdate DESC
+            LIMIT #{offset}, #{pageSize}
+    </select>
+
+    <!-- 2) 전체 개수 -->
+    <select id="countByCategory" resultType="int" parameterType="long">
+        SELECT COUNT(*)
+        FROM post
+        WHERE category_id = #{categoryId}
+    </select>
+
+    <!-- 제목 검색 (페이징) -->
+    <select id="searchByTitle" resultMap="postResultMap" parameterType="map">
+        SELECT p.post_id, p.title, p.content, p.up_count, p.down_count,
+               p.view_count, p.regdate, p.picture,
+               c.category_id, c.name AS categoryName,
+               m.member_id, m.name AS memberName
+        FROM post p
+                 INNER JOIN category c ON p.category_id = c.category_id
+                 INNER JOIN member m   ON p.member_id   = m.member_id
+        WHERE p.category_id = #{categoryId}
+          AND p.title LIKE CONCAT('%', #{q}, '%')
+        ORDER BY p.regdate DESC
+            LIMIT #{offset}, #{pageSize}
+    </select>
+
+    <select id="countByTitle" resultType="int" parameterType="map">
+        SELECT COUNT(*)
+        FROM post
+        WHERE category_id = #{categoryId}
+          AND title LIKE CONCAT('%', #{q}, '%')
+    </select>
+
+    <!-- 작성자 검색 (페이징) -->
+    <select id="searchByAuthor" resultMap="postResultMap" parameterType="map">
+        SELECT p.post_id, p.title, p.content, p.up_count, p.down_count,
+               p.view_count, p.regdate, p.picture,
+               c.category_id, c.name AS categoryName,
+               m.member_id, m.name AS memberName
+        FROM post p
+                 INNER JOIN category c ON p.category_id = c.category_id
+                 INNER JOIN member m   ON p.member_id   = m.member_id
+        WHERE p.category_id = #{categoryId}
+          AND m.name LIKE CONCAT('%', #{q}, '%')
+        ORDER BY p.regdate DESC
+            LIMIT #{offset}, #{pageSize}
+    </select>
+
+    <select id="countByAuthor" resultType="int" parameterType="map">
+        SELECT COUNT(*)
+        FROM post p
+                 INNER JOIN member m ON p.member_id = m.member_id
+        WHERE p.category_id = #{categoryId}
+          AND m.name LIKE CONCAT('%', #{q}, '%')
+    </select>
+
+
+    <resultMap id="postResultMap" type="idusw.soccerworld.domain.dto.PostDto">
+        <id property="postId" column="post_id"/>
+        <result property="title" column="title"/>
+        <result property="content" column="content"/>
+        <result property="upCount" column="up_count"/>
+        <result property="downCount" column="down_count"/>
+        <result property="viewCount" column="view_count"/>
+        <result property="regDate" column="regdate"/>
+        <result property="picture" column="picture"/>
+
+        <association property="memberDto" javaType="idusw.soccerworld.domain.dto.MemberDto">
+            <id property="memberId" column="member_id"/>
+            <result property="name" column="memberName"/>
+        </association>
+
+        <association property="categoryDto" javaType="idusw.soccerworld.domain.dto.CategoryDto">
+            <id property="categoryId" column="category_id"/>
+            <result property="name" column="categoryName"/>
+        </association>
+    </resultMap>
+</mapper>

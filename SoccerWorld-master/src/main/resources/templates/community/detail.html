@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta id="_csrf" name="_csrf" th:content="${_csrf.token}"/>
+  <meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.headerName}"/>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <title>N & LW Lawn Care - Landscaping Bootstrap4 HTML5 Responsive Template </title>
+  <!-- Bootstrap core CSS -->
+  <link href="/static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Fontawesome CSS -->
+  <link href="/static/css/all.css" rel="stylesheet">
+  <link
+          rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css"
+  />
+  <!-- Custom styles for this template -->
+  <link href="/static/css/style.css" rel="stylesheet">
+  <link href="/static/css/main-style.css" rel="stylesheet">
+  <!-- Custom styles for SoccerWorld -->
+  <link href="/static/css/card.css" rel="stylesheet">
+
+</head>
+<body>
+<!-- Navigation -->
+<nav th:insert="/fragments/fragments :: nav"></nav>
+
+<!-- Category List -->
+<div class="container">
+
+  <div class="full-title">
+    <div class="container">
+      <!-- Page Heading/Breadcrumbs -->
+      <h1 class="mt-4 mb-3" >
+            <span class="category-title"
+                  th:each="category : ${categoryList}"
+                  th:if="${category.categoryId == currentCategory}"
+                  th:text="${category.name}">
+                해당 카테고리 이름
+            </span>
+      </h1>
+    </div>
+  </div>
+
+  <!-- Category List -->
+
+  <div class="breadcrumb-main">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        Categories
+      </li>
+      <li class="breadcrumb-item" th:each="category : ${categoryList}">
+        <a th:href="@{/category/{id}(id=${category.categoryId})}" th:text="${category.name}"></a>
+      </li>
+    </ol>
+  </div>
+
+  <div class="row">
+    <!-- Post Content Column -->
+    <div class="col-md-12">
+      <!-- Preview Image -->
+      <img class="img-fluid rounded" src="images/blog-item-01.jpg" alt="" />
+      <hr>
+      <div class="d-flex justify-content-between align-items-center">
+        <p class="lead mb-0" th:text="${post.title}"></p>
+        <div>
+          <a th:href="@{/category/{id}(id=${currentCategory})}" class="btn btn-secondary">목록</a>
+          <span th:if="${#authentication != null
+                    and #authentication.principal != 'anonymousUser'
+                    and #authentication.principal.memberId == post.memberDto.memberId}" >
+          <a th:href="@{/post/update/{id}(id=${post.postId})}" class="btn btn-secondary">수정</a>
+          <form th:action="@{/post/delete/{id}(id=${post.postId})}" method="get" style="display:inline;" onsubmit="return confirm('정말 삭제하시겠습니까?');">
+            <button type="submit" class="btn btn-danger">삭제</button>
+          </form>
+          </span>
+        </div>
+      </div>
+      <hr>
+      <!-- Post Content -->
+      <p class="d-flex justify-content-between">
+        <span th:text="${post.memberDto.name} + ' | ' + ${post.regDate}"></span>
+        <span class="ml-auto" th:text="'추천: ' + ${post.upCount} +'   조회: ' + ${post.viewCount} + '   댓글: ' + ${commentList.size()}"></span>
+      </p>
+
+      <div th:if="${post.picture != null && post.picture != ''}">
+        <img class="img-fluid rounded" th:src="${post.picture}" alt="picture" style="width: 100%; max-width: 600px; " />
+      </div>
+      <br>
+      <div class="lead" th:utext="${post.content}" style="white-space: pre-wrap; word-wrap: break-word;"></div>
+
+      <!-- Post Reaction -->
+
+      <div class="post-reaction text-center" style="margin-top:50px;"
+           th:data-post-id="${post.postId}"
+           th:data-member-id="${currentMemberId}">
+        <button class="post-up-btn btn btn-link">
+          <i class="fa"
+             th:classappend="${userReaction == 'UP'} ? ' fa-thumbs-up fa-5x' : ' fa-thumbs-o-up fa-5x'" ></i>
+          <span class="up-count" th:text="${post.upCount}">0</span>
+        </button>
+        <button class="post-down-btn btn btn-link">
+          <i class="fa"
+             th:classappend="${userReaction == 'DOWN'} ? ' fa-thumbs-down fa-5x' : ' fa-thumbs-o-down fa-5x'" ></i>
+          <span class="down-count" th:text="${post.downCount}">0</span>
+        </button>
+      </div>
+      <hr>
+
+      <!-- Comments Form -->
+      <div class="blog-right-side">
+        <div class="card my-4">
+          <h5 class="card-header">전체 댓글 [[${commentList.size()}]]개</h5>
+          <div class="card-body">
+            <!-- 로그인한 경우 댓글 폼 보이기 -->
+            <div th:if="${#authentication?.principal ne 'anonymousUser'}">
+              <form th:action="@{/post/{postId}/{categoryId}/comment/add(postId=${post.postId}, categoryId=${post.categoryDto.categoryId})}" method="post">
+                <input type="hidden" id="memberId" name="memberDto.memberId" th:value="${#authentication.principal.memberId}">
+                <input type="hidden" id="postId" name="postDto.postId" th:value="${post.postId}">
+                <div class="form-group">
+                  <textarea class="form-control123" id="content" name="content" rows="5" placeholder="댓글을 입력하세요" required></textarea>
+                </div>
+                <div class="text-right">
+                  <button type="submit" class="btn btn-primary">댓글 등록</button>
+                </div>
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+              </form>
+            </div>
+            <!-- 로그인하지 않은 경우 로그인 유도 메시지 보이기 -->
+            <div th:if="${#authentication?.principal eq 'anonymousUser'}">
+              <p>댓글 작성은 <a th:href="@{/member/login(page-type='login')}">로그인</a> 후 이용 가능합니다.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Comment List -->
+      <div id="comment-section">
+        <div class="comment-item d-flex align-items-start py-2 border-bottom"
+             th:each="comment : ${commentList}"
+             style="justify-content: flex-start">
+          <!-- 작성자 -->
+          <div class="comment-author text-left" style="width: 10%;">
+            <strong th:text="${comment.memberDto.name}">이름</strong>
+          </div>
+
+          <!-- 내용 + 리액션 -->
+          <div class="comment-body d-flex align-items-start" style="flex-grow:1;">
+            <!-- 1) 댓글 내용 (flex-grow 로 남은 공간 차지) -->
+            <div class="comment-content d-flex"  style="word-break: break-word;" >
+              <span class="comment-text flex-grow-1" th:text="${comment.content}"
+                    style="white-space: pre-wrap;">댓글 내용</span>
+              <!-- 편집용 input (숨겨져 있다가 js로 보이게) -->
+              <textarea class="form-control comment-edit-input flex-grow-1"
+                        style="display:none; margin-left:0.5rem; resize: horizontal; white-space: pre;"
+                        th:text="${comment.content}"></textarea>
+            </div>
+
+            <!-- 2) 리액션 버튼  -->
+            <div class="comment-reaction d-flex align-items-center ml-2"
+                 th:data-comment-id="${comment.commentId}"
+                 th:data-member-id="${currentMemberId}">
+              <button class="comment-up-btn btn btn-link p-0">
+                <i class="fa"
+                   th:classappend="${commentUserReactions[comment.commentId] == 'UP'} ? ' fa-thumbs-up' : ' fa-thumbs-o-up'">
+                </i>
+              </button>
+              <span class="up-count ml-1" th:text="${comment.upCount}">0</span>
+              <button class="comment-down-btn btn btn-link p-0 ml-3">
+                <i class="fa"
+                   th:classappend="${commentUserReactions[comment.commentId] == 'DOWN'} ? ' fa-thumbs-down' : ' fa-thumbs-o-down'">
+                </i>
+              </button>
+              <span class="down-count ml-1" th:text="${comment.downCount}">0</span>
+            </div>
+          </div>
+
+          <!-- 수정/삭제 -->
+          <div th:if="${#authentication != null
+                    and #authentication.principal != 'anonymousUser'
+                    and #authentication.principal.memberId == comment.memberDto.memberId}"
+               class="comment-actions mr-3" style="width: 15%;">
+            <button class="btn btn-sm btn-outline-primary edit-comment-btn"
+                    th:data-comment-id="${comment.commentId}">수정</button>
+            <button class="btn btn-sm btn-outline-primary save-comment-btn"
+                    th:data-comment-id="${comment.commentId}" style="display: none;">저장</button>
+            <button class="btn btn-sm btn-outline-primary cancel-edit-btn"
+                    th:data-comment-id="${comment.commentId}" style="display: none;">취소</button>
+            <button class="btn btn-sm btn-outline-danger delete-comment-btn"
+                    th:data-comment-id="${comment.commentId}">삭제</button>
+          </div>
+
+          <!-- 날짜 -->
+          <div class="comment-regdate text-right text-muted" style="width:12%;">
+            <small th:text="${comment.regDate}">시간</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<br>
+<!--footer starts from here-->
+<footer class="footer">
+  <div class="container bottom_border">
+    <div class="row">
+      <div class="col-lg-3 col-md-6 col-sm-6 col">
+        <h5 class="headin5_amrc col_white_amrc pt2">Find us</h5>
+        <!--headin5_amrc-->
+        <p class="mb10">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s</p>
+        <p><i class="fa fa-location-arrow"></i> 9878/25 sec 9 rohini 35 </p>
+        <p><i class="fa fa-phone"></i> +91-9999878398 </p>
+        <p><i class="fa fa fa-envelope"></i> info@example.com </p>
+      </div>
+      <div class="col-lg-3 col-md-6 col-sm-6 col">
+        <h5 class="headin5_amrc col_white_amrc pt2">Follow us</h5>
+        <!--headin5_amrc ends here-->
+        <ul class="footer_ul2_amrc">
+          <li>
+            <a href="#"><i class="fab fa-twitter fleft padding-right"></i> </a>
+            <p>Lorem Ipsum is simply dummy printing...<a href="#">https://www.lipsum.com/</a></p>
+          </li>
+          <li>
+            <a href="#"><i class="fab fa-twitter fleft padding-right"></i> </a>
+            <p>Lorem Ipsum is simply dummy printing...<a href="#">https://www.lipsum.com/</a></p>
+          </li>
+          <li>
+            <a href="#"><i class="fab fa-twitter fleft padding-right"></i> </a>
+            <p>Lorem Ipsum is simply dummy printing...<a href="#">https://www.lipsum.com/</a></p>
+          </li>
+        </ul>
+        <!--footer_ul2_amrc ends here-->
+      </div>
+      <div class="col-lg-3 col-md-6 col-sm-6">
+        <h5 class="headin5_amrc col_white_amrc pt2">Quick links</h5>
+        <!--headin5_amrc-->
+        <ul class="footer_ul_amrc">
+          <li><a href="#">Default Version</a></li>
+          <li><a href="#">Boxed Version</a></li>
+          <li><a href="#">Our Team </a></li>
+          <li><a href="#">About Us</a></li>
+          <li><a href="#">Our Services</a></li>
+          <li><a href="#">Get In Touch</a></li>
+        </ul>
+        <!--footer_ul_amrc ends here-->
+      </div>
+      <div class="col-lg-3 col-md-6 col-sm-6 ">
+        <h5 class="headin5_amrc col_white_amrc pt2">Recent posts</h5>
+        <!--headin5_amrc-->
+        <ul class="footer_ul_amrc">
+          <li class="media">
+            <div class="media-left">
+              <img class="img-fluid" src="images/post-img-01.jpg" alt="" />
+            </div>
+            <div class="media-body">
+              <p>How to find best dog food?</p>
+              <span>22 Sep 2018</span>
+            </div>
+          </li>
+          <li class="media">
+            <div class="media-left">
+              <img class="img-fluid" src="images/post-img-02.jpg" alt="" />
+            </div>
+            <div class="media-body">
+              <p>How to find best dog food?</p>
+              <span>34 Sep 2018</span>
+            </div>
+          </li>
+          <li class="media">
+            <div class="media-left">
+              <img class="img-fluid" src="images/post-img-03.jpg" alt="" />
+            </div>
+            <div class="media-body">
+              <p>How to find best dog food?</p>
+              <span>30 Sep 2018</span>
+            </div>
+          </li>
+        </ul>
+        <!--footer_ul_amrc ends here-->
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    <div class="footer-logo">
+      <a href="#"><img src="images/footer-logo.png" alt="" /></a>
+    </div>
+    <!--foote_bottom_ul_amrc ends here-->
+    <p class="copyright text-center">All Rights Reserved. &copy; 2018 <a href="#">N & LW Lawn Care</a> Design By :
+      <a href="https://html.design/">html design</a>
+    </p>
+    <ul class="social_footer_ul">
+      <li><a href="#"><i class="fab fa-facebook-f"></i></a></li>
+      <li><a href="#"><i class="fab fa-twitter"></i></a></li>
+      <li><a href="#"><i class="fab fa-linkedin"></i></a></li>
+      <li><a href="#"><i class="fab fa-instagram"></i></a></li>
+    </ul>
+    <!--social_footer_ul ends here-->
+  </div>
+</footer>
+
+<!-- Bootstrap core JavaScript -->
+<script src="/static/vendor/jquery/jquery.min.js"></script>
+<script src="/static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/static/js/community.js"></script>
+</body>
+</html>

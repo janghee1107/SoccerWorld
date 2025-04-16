@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<title>SoccerWorld Login / Register</title>
+<link rel="stylesheet" href="/static/css/loginPage.css">
+</head>
+<body>
+<div class="wrap">
+    <div class="form-wrap" id="wrapper">
+        <div class="button-wrap">
+            <div id="btn"></div>
+            <button type="button" class="togglebtn" onclick="goLogin()">LOG IN</button>
+            <button type="button" class="togglebtn" onclick="goRegister()">REGISTER</button>
+        </div>
+        <div class="logo">
+            <h3 style="text-align: center">SoccerWorld</h3>
+        </div>
+        <!-- 로그인 요청 form -->
+        <form id="login" th:action="@{/member/login}" th:object="${memberDto}" method="post" class="input-group">
+            <input type="text" name="id" class="input-field" placeholder="Enter ID" required>
+            <input type="password" name="password" class="input-field" placeholder="Enter Password" required>
+            <input hidden th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            <br><br>
+            <button class="submit">Login</button>
+        </form>
+        <!-- 회원가입 요청 form -->
+        <form id="register" method="post" th:object="${memberDto}" action="/member/register" class="input-group">
+            <input type="text" id="id" name="id" class="input-field" style="width:80%;" placeholder="ID" required>
+            <button type="button" class="send-button" onclick="idCheck()">중복 확인</button><br>
+            <input type="password" name="password" class="input-field" placeholder="Enter Password" required>
+            <input type="text" name="name" class="input-field" placeholder="Your Name" required>
+            <input type="date" id="birthday" name="birthday" class="input-field" required>
+            <input type="text" name="phone" class="input-field" placeholder="Phone Number" required>
+            <input type="text" name="nickname" id="nickname"
+                   class="input-field" style="width:80%;" placeholder="Your Nickname" required>
+            <button type="button" class="send-button" onclick="nickCheck()">중복 확인</button><br>
+            <input type="checkbox" id="man" name="gender" class="checkbox" value="0">
+            <label for="man" style="font-size:12px">man</label>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <input type="checkbox" id="woman" name="gender" class="checkbox" value="1">
+            <label for="woman" style="font-size:12px">Woman</label>
+            <br>
+            <select id="leagueSelector">
+                <option value="">선호하는 팀이 소속된 리그를 선택하세요</option>
+                <option value="Premier League">England Premier League</option>
+                <option value="La Liga">Spain La Liga</option>
+                <option value="Serie A">Italy Serie A</option>
+                <option value="Bundesliga">Germany Bundesliga</option>
+            </select>
+            <br>
+            <select id="teamSelector" name="teamId">
+            </select>
+
+            <input hidden th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            <br><br><br>
+            <button type="button" class="submit" onclick="registerSubmit()">REGISTER</button>
+        </form>
+    </div>
+</div>
+<script src="/static/js/login.js"></script>
+<script th:inline="javascript">
+    let message = [[${message}]]; //controller에서 날린 request 객체에 담긴 메세지
+    let type = [[${type}]]; //페이지 요청 시 url에 담긴 파라미터
+
+    if(message!=null){
+        alert(message);
+    }
+
+    if(type.toString()=="login"){
+        goLogin();
+    } else if(type.toString()=="register"){
+        goRegister();
+    }
+</script>
+</body>
+</html>

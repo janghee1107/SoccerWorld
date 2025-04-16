@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="TeamMapper">
+    <insert id="insertTeam" parameterType="java.util.List">
+        insert into team (
+        team_id, name, logo, stadium, location, head_coach, league
+        )
+        values
+        <foreach collection="list" item="teamDto" separator=",">
+            (
+            #{teamDto.teamId},
+            #{teamDto.name},
+            #{teamDto.logo},
+            #{teamDto.stadium},
+            #{teamDto.location},
+            #{teamDto.headCoach},
+            #{teamDto.league}
+            )
+        </foreach>
+        on DUPLICATE key update
+        team_id = VALUES(team_id),
+        name = VALUES(name),
+        logo = VALUES(logo),
+        stadium = VALUES(stadium),
+        location = VALUES(location),
+        head_coach = VALUES(head_coach),
+        league = VALUES(league);
+    </insert>
+
+    <insert id="insertTeams">
+        INSERT INTO team (team_id, name, league, logo, head_coach, stadium, location)
+        VALUES
+        <foreach collection="list" item="teamDto" separator=",">
+            (#{teamDto.teamId}, #{teamDto.name}, #{teamDto.league}, #{teamDto.logo}, #{teamDto.headCoach}, #{teamDto.stadium}, #{teamDto.location})
+        </foreach>
+        on DUPlICATE KEY UPDATE
+        team_id = VALUES(team_id),
+        name = VALUES(name),
+        league = VALUES(league),
+        head_coach = VALUES(head_coach),
+        stadium = VALUES(stadium),
+        location = VALUES(location)
+    </insert>
+
+    <select id="selectAll" resultType="teamDto">
+        SELECT team_id AS teamId, name, league, logo, head_coach, stadium, location from team
+    </select>
+
+    <select id="selectOneByPk" resultType="teamDto" parameterType="Long">
+        SELECT team_id AS teamId, name, league, logo, head_coach, stadium, location from team WHERE team_id = #{teamId}
+    </select>
+</mapper>

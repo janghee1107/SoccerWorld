@@ -1,0 +1,103 @@
+/* 기본 설정 */
+body {
+    background-color: #f0f2f5;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    color: #333;
+}
+
+/* 카드 스타일 */
+.card {
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    background-color: #fff;
+    margin-top: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* 버튼 스타일 */
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: #fff;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+.btn-primary:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+.btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    color: #fff;
+}
+.btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+/* 테이블 스타일 */
+.ranking-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+.ranking-table th, .ranking-table td {
+    padding: 15px;
+    text-align: center;
+    border: none;
+}
+.ranking-table thead {
+    background-color: #007bff !important;
+    color: #fff !important;
+    font-weight: bold;
+}
+.ranking-table tbody tr {
+    background-color: #ffffff !important; /* 모든 행의 배경을 흰색으로 고정 */
+}
+.ranking-table tbody tr:hover {
+    background-color: #ffffff !important; /* 마우스 오버 시 강조 색 */
+}
+
+/* 드롭다운 메뉴 */
+.dropdown-menu {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    border-radius: 6px;
+}
+.dropdown-menu a {
+    font-weight: 600;
+    color: #333;
+    transition: color 0.2s;
+}
+.dropdown-menu a:hover {
+    background-color: #007bff;
+    color: #fff;
+}
+
+/* 텍스트 스타일 */
+.card-title {
+    font-weight: bold;
+    font-size: 1.5rem;
+    color: #333;
+}
+.more-btn {
+    text-align: right;
+    font-size: 1.2rem;
+    color: #6c757d;
+}
+
+/* 활성화된 리그 스타일 */
+.active-league {
+    background-color: #007bff;
+    color: #fff !important;
+}
+
+/* 테이블 헤더 강조 스타일 */
+.underline {
+    text-decoration: underline;
+}

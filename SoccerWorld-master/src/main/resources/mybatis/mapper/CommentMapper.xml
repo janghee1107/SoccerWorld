@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="commentMapper">
+    <insert id="addComment" parameterType="idusw.soccerworld.domain.dto.CommentDto">
+        INSERT INTO comment(member_id, post_id, content, up_count, down_count, regdate)
+        VALUES (#{memberDto.memberId}, #{postDto.postId}, #{content}, 0, 0, NOW())
+    </insert>
+
+    <select id="getCommentsByPost" resultMap="commentResultMap">
+        SELECT c.comment_id, c.content, c.regdate, c.up_count, c.down_count, c.post_id,
+               m.member_id, m.name AS memberName
+        FROM comment c
+                 INNER JOIN member m ON c.member_id = m.member_id
+        WHERE c.post_id = #{postId}
+        ORDER BY c.regdate ASC;
+    </select>
+
+    <update id="updateComment">
+        UPDATE comment
+        SET content = #{content}, regdate = NOW()
+        WHERE comment_id = #{commentId}
+    </update>
+
+    <delete id="deleteComment" parameterType="Long">
+        delete from comment where comment_id = #{commentId}
+    </delete>
+
+    <update id="incrementUpCount" parameterType="idusw.soccerworld.domain.dto.CommentDto">
+        UPDATE comment
+        SET up_count = up_count + #{upCount}
+        WHERE comment_id = #{commentId}
+    </update>
+
+    <update id="incrementDownCount" parameterType="idusw.soccerworld.domain.dto.CommentDto">
+        UPDATE comment
+        SET down_count = down_count + #{downCount}
+        WHERE comment_id = #{commentId}
+    </update>
+
+    <resultMap id="commentResultMap" type="idusw.soccerworld.domain.dto.CommentDto">
+        <id property="commentId" column="comment_id"/>
+        <result property="content" column="content"/>
+        <result property="upCount" column="up_count"/>
+        <result property="downCount" column="down_count"/>
+        <result property="regDate" column="regdate"/>
+
+        <association property="postDto" javaType="idusw.soccerworld.domain.dto.PostDto">
+            <id property="postId" column="post_id"/>
+        </association>
+
+        <association property="memberDto" javaType="idusw.soccerworld.domain.dto.MemberDto">
+            <id property="memberId" column="member_id"/>
+            <result property="name" column="memberName"/>
+        </association>
+    </resultMap>
+</mapper>

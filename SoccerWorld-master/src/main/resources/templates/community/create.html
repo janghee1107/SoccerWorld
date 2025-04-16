@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta id="_csrf" name="_csrf" th:content="${_csrf.token}"/>
+  <meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.headerName}"/>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <title>N & LW Lawn Care - Landscaping Bootstrap4 HTML5 Responsive Template </title>
+  <!-- Bootstrap core CSS -->
+  <link href="/static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Fontawesome CSS -->
+  <link href="/static/css/all.css" rel="stylesheet">
+  <link
+          rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css"
+  />
+  <!-- Custom styles for this template -->
+  <link href="/static/css/style.css" rel="stylesheet">
+  <link href="/static/css/main-style.css" rel="stylesheet">
+  <!-- Custom styles for SoccerWorld -->
+  <link href="/static/css/card.css" rel="stylesheet">
+
+</head>
+<body>
+<!-- Navigation -->
+<nav th:insert="/fragments/fragments :: nav"></nav>
+
+<!-- full Title -->
+<div class="full-title">
+  <div class="container">
+    <!-- Page Heading/Breadcrumbs -->
+    <h1 class="mt-4 mb-3">게시글 생성
+    </h1>
+  </div>
+</div>
+
+<!-- Category List -->
+<div class="container">
+  <div class="breadcrumb-main">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        Categories
+      </li>
+      <li class="breadcrumb-item" th:each="category : ${categoryList}">
+        <a th:href="@{/category/{id}(id=${category.categoryId})}" th:text="${category.name}"></a>
+      </li>
+    </ol>
+  </div>
+
+  <div class="row">
+    <!-- Post Content Column -->
+    <div class="col-md-12">
+      <form th:action="@{/post/create}" method="post" enctype="multipart/form-data">
+        <input type="hidden" id="memberId" name="memberDto.memberId" th:value="${#authentication.principal.memberId}">
+        <div class="form-group">
+          <label for="category_id">카테고리 선택</label>
+          <select class="form-control" id="category_id" name="categoryDto.categoryId">
+            <option th:each="category : ${categoryList}"
+                    th:value="${category.categoryId}"
+                    th:text="${category.name}">
+            </option>
+          </select>
+        </div>
+
+        <hr>
+        <div class="form-group">
+          <label for="title">제목</label>
+          <input type="text" class="form-control" id="title" name="title" placeholder="제목을 입력하세요" required>
+        </div>
+        <hr>
+        <!-- Post Content -->
+        <p class="d-flex justify-content-between">
+        <div class="form-group">
+          <label for="content">내용</label>
+          <textarea class="form-control" id="content" name="content" rows="10" placeholder="내용을 입력하세요" required></textarea>
+        </div>
+        </p>
+        <hr>
+        <div class="form-group">
+          <label for="picture">이미지 첨부</label>
+          <input type="file" class="form-control-file" id="picture" name="imageFile" accept="image/*"  />
+        </div>
+        <br><br>
+        <div class="text-right">
+          <button type="submit" class="btn btn-primary">글쓰기</button>
+        </div>
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+      </form>
+      <br><br>
+
+
+    </div>
+  </div>
+  <!-- /.row -->
+
+</div>
+<!-- /.container -->
+
+<!--footer starts from here-->
+<footer class="footer">
+  <div class="container bottom_border">
+    <div class="row">
+      <div class="col-lg-3 col-md-6 col-sm-6 col">
+        <h5 class="headin5_amrc col_white_amrc pt2">Find us</h5>
+        <!--headin5_amrc-->
+        <p class="mb10">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s</p>
+        <p><i class="fa fa-location-arrow"></i> 9878/25 sec 9 rohini 35 </p>
+        <p><i class="fa fa-phone"></i> +91-9999878398 </p>
+        <p><i class="fa fa fa-envelope"></i> info@example.com </p>
+      </div>
+      <div class="col-lg-3 col-md-6 col-sm-6 col">
+        <h5 class="headin5_amrc col_white_amrc pt2">Follow us</h5>
+        <!--headin5_amrc ends here-->
+        <ul class="footer_ul2_amrc">
+          <li>
+            <a href="#"><i class="fab fa-twitter fleft padding-right"></i> </a>
+            <p>Lorem Ipsum is simply dummy printing...<a href="#">https://www.lipsum.com/</a></p>
+          </li>
+          <li>
+            <a href="#"><i class="fab fa-twitter fleft padding-right"></i> </a>
+            <p>Lorem Ipsum is simply dummy printing...<a href="#">https://www.lipsum.com/</a></p>
+          </li>
+          <li>
+            <a href="#"><i class="fab fa-twitter fleft padding-right"></i> </a>
+            <p>Lorem Ipsum is simply dummy printing...<a href="#">https://www.lipsum.com/</a></p>
+          </li>
+        </ul>
+        <!--footer_ul2_amrc ends here-->
+      </div>
+      <div class="col-lg-3 col-md-6 col-sm-6">
+        <h5 class="headin5_amrc col_white_amrc pt2">Quick links</h5>
+        <!--headin5_amrc-->
+        <ul class="footer_ul_amrc">
+          <li><a href="#">Default Version</a></li>
+          <li><a href="#">Boxed Version</a></li>
+          <li><a href="#">Our Team </a></li>
+          <li><a href="#">About Us</a></li>
+          <li><a href="#">Our Services</a></li>
+          <li><a href="#">Get In Touch</a></li>
+        </ul>
+        <!--footer_ul_amrc ends here-->
+      </div>
+      <div class="col-lg-3 col-md-6 col-sm-6 ">
+        <h5 class="headin5_amrc col_white_amrc pt2">Recent posts</h5>
+        <!--headin5_amrc-->
+        <ul class="footer_ul_amrc">
+          <li class="media">
+            <div class="media-left">
+              <img class="img-fluid" src="images/post-img-01.jpg" alt="" />
+            </div>
+            <div class="media-body">
+              <p>How to find best dog food?</p>
+              <span>22 Sep 2018</span>
+            </div>
+          </li>
+          <li class="media">
+            <div class="media-left">
+              <img class="img-fluid" src="images/post-img-02.jpg" alt="" />
+            </div>
+            <div class="media-body">
+              <p>How to find best dog food?</p>
+              <span>34 Sep 2018</span>
+            </div>
+          </li>
+          <li class="media">
+            <div class="media-left">
+              <img class="img-fluid" src="images/post-img-03.jpg" alt="" />
+            </div>
+            <div class="media-body">
+              <p>How to find best dog food?</p>
+              <span>30 Sep 2018</span>
+            </div>
+          </li>
+        </ul>
+        <!--footer_ul_amrc ends here-->
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    <div class="footer-logo">
+      <a href="#"><img src="images/footer-logo.png" alt="" /></a>
+    </div>
+    <!--foote_bottom_ul_amrc ends here-->
+    <p class="copyright text-center">All Rights Reserved. &copy; 2018 <a href="#">N & LW Lawn Care</a> Design By :
+      <a href="https://html.design/">html design</a>
+    </p>
+    <ul class="social_footer_ul">
+      <li><a href="#"><i class="fab fa-facebook-f"></i></a></li>
+      <li><a href="#"><i class="fab fa-twitter"></i></a></li>
+      <li><a href="#"><i class="fab fa-linkedin"></i></a></li>
+      <li><a href="#"><i class="fab fa-instagram"></i></a></li>
+    </ul>
+    <!--social_footer_ul ends here-->
+  </div>
+</footer>
+
+<!-- Bootstrap core JavaScript -->
+<script src="/static/vendor/jquery/jquery.min.js"></script>
+<script src="/static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
