@@ -142,7 +142,7 @@
       <hr>
 <br>
       <!-- pagination -->
-      <div th:if="${currentPage != null}">
+      <div th:if="${currentPage != null && postList != null && postList.size() != 0}">
         <nav>
           <ul class="pagination justify-content-center">
             <li class="page-item" th:classappend="${currentPage == 1} ? ' disabled'">
@@ -161,6 +161,25 @@
             <li class="page-item" th:classappend="${currentPage == totalPages} ? ' disabled'">
               <a class="page-link"
                  th:href="@{/category/{id}(id=${currentCategory}, page=${currentPage + 1}, size=${pageSize})}">
+                Next
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+      <div th:if="${postList == null || postList.size() == 0}">
+        <nav>
+          <ul class="pagination justify-content-center">
+            <li class="page-item">
+              <a class="page-link">
+                Prev
+              </a>
+            </li>
+            <li class="page-item">
+              <a class="page-link">1</a>
+            </li>
+            <li class="page-item">
+              <a class="page-link">
                 Next
               </a>
             </li>
